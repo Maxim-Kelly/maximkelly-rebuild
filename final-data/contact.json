@@ -1,0 +1,106 @@
+[
+  {
+    "project_url": 0,
+    "title": "Maxim Kelly | Director",
+    "pin": false,
+    "in_nav": false,
+    "is_homepage": false,
+    "content": "",
+    "images": [],
+    "backdrop": null,
+    "local_css": ""
+  },
+  {
+    "project_url": "FILMS-1",
+    "title": "FILMS",
+    "pin": false,
+    "in_nav": false,
+    "is_homepage": false,
+    "content": "",
+    "images": [],
+    "backdrop": null,
+    "local_css": ""
+  },
+  {
+    "project_url": "Header_L",
+    "title": "Header_L",
+    "pin": true,
+    "in_nav": false,
+    "is_homepage": false,
+    "content": "<h1><a href=\"Menu\" rel=\"history\">MAXIM KELLY</a></h1>",
+    "images": [],
+    "backdrop": null,
+    "local_css": "\n\t\t[local-style=\"17634933\"] .container_width {\n\twidth: 23% /*!variable_defaults*/;\n}\n\n[local-style=\"17634933\"] body {\n}\n\n[local-style=\"17634933\"] .backdrop {\n}\n\n[local-style=\"17634933\"] .page {\n}\n\n[local-style=\"17634933\"] .page_background {\n\tbackground-color: initial /*!page_container_bgcolor*/;\n}\n\n[local-style=\"17634933\"] .content_padding {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] bodycopy {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] bodycopy a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] bodycopy a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] h1 {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] h1 a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] h1 a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] h2 {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] h2 a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] h2 a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] small {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] small a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634933\"] small a:hover {\n}\n\t"
+  },
+  {
+    "project_url": "Header_R",
+    "title": "Header_R",
+    "pin": true,
+    "in_nav": false,
+    "is_homepage": false,
+    "content": "<h1><a href=\"Menu\" rel=\"history\">+</a></h1>",
+    "images": [],
+    "backdrop": null,
+    "local_css": "\n\t\t[local-style=\"17635774\"] .container_width {\n\twidth: 23% /*!variable_defaults*/;\n}\n\n[local-style=\"17635774\"] body {\n}\n\n[local-style=\"17635774\"] .backdrop {\n}\n\n[local-style=\"17635774\"] .page {\n}\n\n[local-style=\"17635774\"] .page_background {\n\tbackground-color: initial /*!page_container_bgcolor*/;\n}\n\n[local-style=\"17635774\"] .content_padding {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] bodycopy {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] bodycopy a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] bodycopy a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] h1 {\n\tfont-size: 2.4rem;\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] h1 a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] h1 a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] h2 {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] h2 a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] h2 a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] small {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] small a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17635774\"] small a:hover {\n}\n\n[local-style=\"17635774\"] .container {\n\tmargin-left: auto /*!content_right*/;\n\tmargin-right: 0 /*!content_right*/;\n\ttext-align: right /*!text_right*/;\n}\n\t"
+  },
+  {
+    "project_url": "Home",
+    "title": "Home",
+    "pin": false,
+    "in_nav": false,
+    "is_homepage": true,
+    "content": "",
+    "images": [
+      {
+        "id": 96707546,
+        "project_id": 17634446,
+        "image_ref": "{image 1}",
+        "name": "DJANGO_DJANGO_SPIRALS_MASTER_040920_DCP_VERSION_B.00_01_47_14.Still007.jpg",
+        "hash": "de9fb66c30696be2b149b6dcdb828e2e9c18d1a545b6c437427b7e77f78f7304",
+        "width": 1920,
+        "height": 1080,
+        "sort": 0,
+        "exclude_from_backdrop": false,
+        "date_added": "1611761470"
+      }
+    ],
+    "backdrop": {
+      "id": 2848923,
+      "site_id": 1014760,
+      "page_id": 17634446,
+      "backdrop_id": 12,
+      "backdrop_path": "video",
+      "is_active": true,
+      "data": {
+        "video_url": "https://files.cargocollective.com/c1014760/webfrontpage.mp4",
+        "scale_option": "cover",
+        "margin": 0,
+        "limit_size": false,
+        "preset_image": "//static.cargo.site/assets/backdrop/video/hexed_16.png",
+        "alpha": 100,
+        "color": "rgba(51,51,51,1)",
+        "use_mobile_image": true,
+        "image": "96707546",
+        "hex": "#333",
+        "backdrop_viewport_lock": false,
+        "using_preset": false,
+        "preset_width": "24",
+        "preset_height": "24",
+        "image_active": false,
+        "requires_webgl": "false"
+      }
+    },
+    "local_css": "[local-style=\"17634446\"] .container_width {\n}\n\n[local-style=\"17634446\"] body {\n\tbackground-color: initial /*!variable_defaults*/;\n}\n\n[local-style=\"17634446\"] .backdrop {\n\twidth: 100% /*!background_cover*/;\n}\n\n[local-style=\"17634446\"] .page {\n\tmin-height: 100vh /*!page_height_100vh*/;\n}\n\n[local-style=\"17634446\"] .page_background {\n\tbackground-color: initial /*!page_container_bgcolor*/;\n}\n\n[local-style=\"17634446\"] .content_padding {\n\tpadding-top: 0rem /*!main_margin*/;\n\tpadding-bottom: 0rem /*!main_margin*/;\n\tpadding-left: 0rem /*!main_margin*/;\n\tpadding-right: 0rem /*!main_margin*/;\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] bodycopy {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] bodycopy a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] h1 {\n\tfont-size: 1.4rem;\n    opacity: 0;\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] h1 a {\n\tcolor: rgba(69, 69, 69, 0.85);\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] h2 {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] h2 a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] small {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] small a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] bodycopy a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] h1 a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] h2 a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17634446\"] small a:hover {\n}\n\n[local-style=\"17634446\"] .container {\n\talign-items: flex-end /*!vertical_bottom*/;\n\t-webkit-align-items: flex-end /*!vertical_bottom*/;\n}"
+  },
+  {
+    "project_url": "Contact",
+    "title": "Contact",
+    "pin": false,
+    "in_nav": false,
+    "is_homepage": false,
+    "content": "<br><div grid-row=\"\" grid-pad=\"5\" grid-gutter=\"10\" grid-responsive=\"\">\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h1>UK<br>\n <a href=\"http://www.friendlondon.tv\" target=\"_blank\">Friend</a></h1><br><br>\n\n</div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h2>Luke Jacobs</h2><br>\n<h1> <a href=\"mailto:luke@friendlondon.tv\">luke@friendlondon.tv</a></h1></div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n</div>\n<hr class=\"dotted\">\n<div grid-row=\"\" grid-pad=\"5\" grid-gutter=\"10\" grid-responsive=\"\">\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h1>MUSIC VIDEOS<br>\n <a href=\"http://www.hurrysundown.com\" target=\"_blank\">Hurry Sundown</a></h1><br><br>\n\n</div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h2>Sam Davey</h2><br>\n<h1> <a href=\"mailto:sam@hurrysundown.com\">sam@hurrysundown.com</a></h1></div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n</div>\n<hr class=\"dotted\">\n<div grid-row=\"\" grid-pad=\"5\" grid-gutter=\"10\" grid-responsive=\"\">\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h1>IRELAND<br>\n <a href=\"http://www.caviar.tv\" target=\"_blank\">Chaser</a></h1><br><br>\n\n</div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h2>Peter Kilmartin</h2><h1><br>\n <a href=\"mailto:peter@spicydogmedia.ie\">peter@spicydogmedia.ie</a></h1></div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n</div>\n<hr class=\"dotted\">\n<div grid-row=\"\" grid-pad=\"5\" grid-gutter=\"10\" grid-responsive=\"\">\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h1>SPAIN<br>\n<a href=\"https://www.grayskull.tv/maxim-kelly\" target=\"_blank\">Grayskull</a></h1><br><br>\n\n</div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h2>Álvaro Priante</h2><h1><br>\n <a href=\"mailto:alvaro.priante@grayskull.tv\">alvaro.priante@grayskull.tv</a></h1></div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n</div>\n<hr class=\"dotted\">\n\n<div grid-row=\"\" grid-pad=\"5\" grid-gutter=\"10\" grid-responsive=\"\">\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h1>PERSONAL<br>\n </h1><br><br>\n\n</div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"><div style=\"text-align: left;\"><h2>Maxim Kelly</h2><br>\n<h1> <a href=\"mailto:maxim@maximkelly.com\">maxim@maximkelly.com</a></h1></div></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n</div>\n<hr class=\"dotted\">\n<div grid-row=\"\" grid-pad=\"5\" grid-gutter=\"10\" grid-responsive=\"\">\n\t<div grid-col=\"x10\" grid-pad=\"5\"><br><br>\n\n</div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n</div><div grid-row=\"\" grid-pad=\"5\" grid-gutter=\"10\" grid-responsive=\"\">\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n\t<div grid-col=\"x10\" grid-pad=\"5\"></div>\n</div>\n<hr class=\"dotted\">",
+    "images": [],
+    "backdrop": null,
+    "local_css": "[local-style=\"17637336\"] .container_width {\n}\n\n[local-style=\"17637336\"] body {\n}\n\n[local-style=\"17637336\"] .backdrop {\n}\n\n[local-style=\"17637336\"] .page {\n\tmin-height: 100vh /*!page_height_100vh*/;\n}\n\n[local-style=\"17637336\"] .page_background {\n\tbackground-color: #000 /*!page_container_bgcolor*/;\n}\n\n[local-style=\"17637336\"] .content_padding {\n\tpadding-top: 6.1rem /*!main_margin*/;\n\tpadding-bottom: 6.1rem /*!main_margin*/;\n\tpadding-left: 6.1rem /*!main_margin*/;\n\tpadding-right: 6.1rem /*!main_margin*/;\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] bodycopy {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] bodycopy a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] bodycopy a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] h1 {\n\tline-height: 1.3;\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] h1 a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] h1 a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] h2 {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] h2 a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] h2 a:hover {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] small {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] small a {\n}\n\n[data-predefined-style=\"true\"] [local-style=\"17637336\"] small a:hover {\n}\n\n[local-style=\"17637336\"] .container {\n\talign-items: flex-start /*!vertical_top*/;\n\t-webkit-align-items: flex-start /*!vertical_top*/;\n\ttext-align: center /*!text_center*/;\n}"
+  }
+]

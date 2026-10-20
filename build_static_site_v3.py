@@ -1,0 +1,803 @@
+#!/usr/bin/env python3
+"""Rebuild the GitHub Pages static site from the cleaned Cargo export data.
+
+This script deliberately avoids touching downloaded assets. It rewrites only HTML files
+and the small shared stylesheet used by those HTML files.
+"""
+
+from __future__ import annotations
+
+import html
+import json
+import re
+import urllib.parse
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parent
+RENDERED = ROOT / "rendered"
+FINAL_DATA = ROOT / "final-data"
+SITE = ROOT / "site"
+ASSETS = SITE / "assets"
+CARGO_ASSETS = ASSETS / "cargo"
+STYLE = ASSETS / "style.css"
+
+SITE.mkdir(exist_ok=True)
+ASSETS.mkdir(parents=True, exist_ok=True)
+
+NON_PROJECT_PAGES = {
+    "summary",
+    "home",
+    "Portfolio",
+    "Menu",
+    "Contact",
+    "Selected-Press",
+}
+TOP_PAGE_FILENAMES = {
+    "Menu": "menu.html",
+    "Portfolio": "portfolio.html",
+    "Contact": "contact.html",
+    "Selected-Press": "selected-press.html",
+    "home": "index.html",
+}
+
+EXTERNAL_HREF_PREFIXES = (
+    "http://",
+    "https://",
+    "mailto:",
+    "tel:",
+    "#",
+    "javascript:",
+    "data:",
+)
+
+SITE_CSS = (
+    """
+:root{
+  --bg:#050505;
+  --panel:#0c0c0c;
+  --panel-soft:#121212;
+  --fg:#f5f3ef;
+  --muted:rgba(245,243,239,.68);
+  --soft:rgba(245,243,239,.46);
+  --rule:rgba(245,243,239,.14);
+  --pad:clamp(18px,3vw,56px);
+  --font:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --shadow:0 20px 80px rgba(0,0,0,.32);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:var(--font);min-height:100%;}
+body{font-size:16px;line-height:1.25;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:.18em}
+img,video{display:block;max-width:100%;height:auto}
+.site-header{
+  position:fixed;
+  inset:0 0 auto 0;
+  z-index:50;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:1rem;
+  align-items:start;
+  padding:18px 22px;
+  pointer-events:none;
+  background:linear-gradient(to bottom, rgba(5,5,5,.92), rgba(5,5,5,.45) 70%, rgba(5,5,5,0));
+  backdrop-filter:blur(10px);
+}
+.site-header a{pointer-events:auto;text-decoration:none}
+.brand,.nav-toggle{font-size:clamp(19px,2vw,31px);line-height:1;font-weight:500;letter-spacing:-.05em}
+.nav-toggle{font-size:clamp(28px,3vw,40px);line-height:.72}
+.page-main{min-height:100vh;padding:calc(var(--pad) + 72px) var(--pad) var(--pad)}
+.project-main{display:flex;align-items:center;justify-content:center;text-align:center;min-height:100vh;padding:calc(var(--pad) + 92px) var(--pad) var(--pad)}
+.project-content{width:min(100%,1080px);margin:0 auto}
+.project-content h1,.project-content h2{font-weight:400;margin:.12em 0;line-height:1.02;letter-spacing:-.05em}
+.project-content h1{font-size:clamp(28px,4vw,66px)}
+.project-content h2{font-size:clamp(16px,1.75vw,24px);color:var(--muted);letter-spacing:-.03em}
+.project-content iframe{display:block;width:min(100%,1040px)!important;aspect-ratio:16/9;height:auto!important;border:0;margin:0 auto;max-width:100%;box-shadow:var(--shadow);border-radius:2px;background:#000}
+.project-content p{margin:0}
+.project-back{margin:clamp(20px,3vw,38px) 0!important}
+.back-link{display:inline-block;color:var(--fg);font-size:clamp(13px,1.1vw,16px);letter-spacing:.02em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid rgba(245,243,239,.22);padding-bottom:.18rem}
+.back-link:hover{opacity:.72;text-decoration:none}
+.portfolio-main{min-height:100vh;padding:82px 0 0;margin:0}
+.image-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;width:100%;margin:0;padding:0;background:var(--rule)}
+.image-gallery .image-link{position:relative;display:block;overflow:hidden;min-width:0;background:#080808;text-decoration:none}
+.image-gallery img{display:block;width:100%;height:auto;transition:opacity .24s ease, transform .45s ease, filter .24s ease}
+.image-gallery .image-link:hover img{opacity:.98;transform:scale(1.02);filter:saturate(1.02)}
+.tile-caption{position:absolute;left:0;right:0;bottom:0;z-index:2;display:block;padding:26px 22px 18px;background:linear-gradient(to top,rgba(0,0,0,.84),rgba(0,0,0,.14) 62%,rgba(0,0,0,0));color:#fff;font-size:clamp(12px,1vw,15px);line-height:1.12;letter-spacing:.02em;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.72);pointer-events:none}
+.tile-caption:empty{display:none}
+.menu-main{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:calc(var(--pad) + 64px) var(--pad) var(--pad)}
+.menu-wrap{display:grid;gap:22px;justify-items:center}
+.menu-kicker{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--soft)}
+.menu-list{display:grid;gap:clamp(10px,1.7vw,22px)}
+.menu-list a{font-size:clamp(44px,8.2vw,120px);line-height:.9;letter-spacing:-.08em;text-decoration:none;text-transform:uppercase}
+.menu-list a:hover{opacity:.72;text-decoration:none;transform:translateY(-1px)}
+.info-main{padding:calc(var(--pad) + 94px) var(--pad) var(--pad)}
+.info-content{width:min(100%,1180px);margin:0 auto}
+.info-content h1,.info-content h2{font-weight:400;margin:0;line-height:1.08;letter-spacing:-.045em}
+.info-content h1{font-size:clamp(22px,2.4vw,40px)}
+.info-content h2{font-size:clamp(12px,1vw,15px);color:var(--soft);letter-spacing:.14em;text-transform:uppercase}
+.info-content br{line-height:1.4}
+.info-content hr,.info-content .dotted{border:0;border-top:1px solid var(--rule);margin:clamp(28px,4vw,48px) 0}
+.info-content [grid-row]{display:grid;grid-template-columns:minmax(180px,.72fr) minmax(0,1.5fr) minmax(0,.35fr);gap:clamp(18px,3vw,52px);align-items:start}
+.info-content [grid-col]{min-width:0}
+.info-content [grid-col]:nth-child(1) h1{font-size:clamp(18px,1.9vw,28px);letter-spacing:-.04em}
+.info-content [grid-col]:nth-child(2) h1{font-size:clamp(24px,2.6vw,42px)}
+.info-content a{text-decoration:none;border-bottom:1px solid rgba(245,243,239,.22);padding-bottom:.04em}
+.info-content a:hover{border-bottom-color:currentColor;text-decoration:none}
+.contact-page .info-content [grid-row]{padding-top:6px}
+.press-page .info-content [grid-col]:nth-child(2) h1{line-height:1.04}
+.redirect-main{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:var(--pad)}
+@media (max-width:980px){
+  .info-content [grid-row]{grid-template-columns:minmax(140px,.8fr) minmax(0,1.4fr)}
+  .info-content [grid-col]:nth-child(3){display:none}
+}
+@media (max-width:780px){
+  .site-header{padding:14px 16px}
+  .image-gallery{grid-template-columns:1fr}
+  .tile-caption{font-size:12px;padding:30px 14px 12px}
+  .project-main,.page-main,.info-main,.menu-main{padding-left:16px;padding-right:16px}
+  .info-content [grid-row]{grid-template-columns:1fr;gap:10px}
+  .info-content [grid-col]:nth-child(1) h1{font-size:17px}
+  .info-content [grid-col]:nth-child(2) h1{font-size:26px}
+  .menu-wrap{gap:16px}
+  .menu-list a{font-size:clamp(42px,14vw,76px)}
+}
+""".strip()
+    + "\n"
+)
+
+
+def read_json(path: Path) -> Any:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def decode_literal_escapes(value: Any) -> str:
+    """Decode literal Cargo/JSON escape leftovers without corrupting real Unicode."""
+    if value is None:
+        return ""
+    text = str(value)
+
+    def repl_u4(match: re.Match[str]) -> str:
+        return chr(int(match.group(1), 16))
+
+    def repl_u8(match: re.Match[str]) -> str:
+        return chr(int(match.group(1), 16))
+
+    text = re.sub(r"\\u([0-9a-fA-F]{4})", repl_u4, text)
+    text = re.sub(r"\\U([0-9a-fA-F]{8})", repl_u8, text)
+    text = text.replace(r"\/", "/")
+    text = text.replace(r"\n", "\n").replace(r"\r", "").replace(r"\t", "\t")
+    text = text.replace(r"\"", '"')
+    return html.unescape(text)
+
+
+def strip_tags(fragment: str) -> str:
+    text = re.sub(r"<[^>]+>", " ", fragment or "")
+    return re.sub(r"\s+", " ", html.unescape(text)).strip()
+
+
+def load_rendered_pages() -> dict[str, dict[str, Any]]:
+    pages: dict[str, dict[str, Any]] = {}
+    for path in sorted(RENDERED.glob("*.json")):
+        if path.stem == "summary":
+            continue
+        data = read_json(path)
+        if isinstance(data, dict) and data.get("page"):
+            pages[str(data["page"])] = data
+    return pages
+
+
+def load_final_page(json_name: str, project_url: str) -> dict[str, Any] | None:
+    path = FINAL_DATA / json_name
+    if not path.exists():
+        return None
+    data = read_json(path)
+    if not isinstance(data, list):
+        return None
+    for item in data:
+        if isinstance(item, dict) and item.get("project_url") == project_url:
+            return item
+    return None
+
+
+def project_display_title(slug: str) -> str:
+    title = slug.replace("_", " ").replace("-", " ")
+    title = re.sub(r"\s+", " ", title).strip()
+    return title or "Project"
+
+
+def canonical_filename(page_or_slug: str) -> str:
+    return TOP_PAGE_FILENAMES.get(page_or_slug, f"{page_or_slug}.html")
+
+
+def normalize_lookup_key(raw: str) -> str:
+    key = html.unescape(raw or "").strip()
+    key = key.replace("\\/", "/")
+    if key.startswith("https://maximpkelly.cargo.site/"):
+        key = key.removeprefix("https://maximpkelly.cargo.site/")
+    if key.startswith("http://maximpkelly.cargo.site/"):
+        key = key.removeprefix("http://maximpkelly.cargo.site/")
+    key = key.strip("/")
+    if key.endswith("/index.html"):
+        key = key[: -len("/index.html")]
+    elif key.endswith("/index"):
+        key = key[: -len("/index")]
+    elif key.endswith(".html"):
+        key = key[: -len(".html")]
+    return key.lower()
+
+
+def build_lookup(project_slugs: list[str]) -> dict[str, str]:
+    lookup: dict[str, str] = {}
+
+    def add(raw: str, target: str) -> None:
+        lookup[normalize_lookup_key(raw)] = target
+
+    add("PORTFOLIO", "portfolio.html")
+    add("Portfolio", "portfolio.html")
+    add("portfolio", "portfolio.html")
+    add("FILMS", "portfolio.html")
+    add("FILMS-1", "portfolio.html")
+    add("films", "portfolio.html")
+    add("Menu", "menu.html")
+    add("menu", "menu.html")
+    add("Contact", "contact.html")
+    add("contact", "contact.html")
+    add("Selected-Press", "selected-press.html")
+    add("Selected_Press", "selected-press.html")
+    add("selected-press", "selected-press.html")
+    add("selected_press", "selected-press.html")
+    add("Home", "index.html")
+    add("home", "index.html")
+
+    for slug in project_slugs:
+        target = f"{slug}.html"
+        variants = {
+            slug,
+            slug.lower(),
+            slug.replace("_", "-"),
+            slug.replace("_", "-").lower(),
+            slug.replace("-", "_"),
+            slug.replace("-", "_").lower(),
+        }
+        for variant in variants:
+            add(variant, target)
+    return lookup
+
+
+def split_href_suffix(href: str) -> tuple[str, str]:
+    match = re.match(r"^([^?#]*)(.*)$", href)
+    if not match:
+        return href, ""
+    return match.group(1), match.group(2)
+
+
+def rewrite_href_value(href: str, lookup: dict[str, str]) -> str:
+    href = html.unescape(href.strip())
+    if not href or href.startswith(EXTERNAL_HREF_PREFIXES):
+        return href
+    base, suffix = split_href_suffix(href)
+    key = normalize_lookup_key(base)
+    if key in lookup:
+        return lookup[key] + suffix
+    alt_key = normalize_lookup_key(base.replace(" ", "-"))
+    if alt_key in lookup:
+        return lookup[alt_key] + suffix
+    return href
+
+
+def rewrite_links(fragment: str, lookup: dict[str, str]) -> str:
+    fragment = fragment.replace('href=\\"', 'href="').replace('\\"', '"')
+    fragment = fragment.replace(r"\/", "/")
+    fragment = re.sub(r"\s+rel=([\"'])history\1", "", fragment, flags=re.I)
+    fragment = re.sub(r"\s+rel=([\"'])home_page\1", "", fragment, flags=re.I)
+
+    def repl(match: re.Match[str]) -> str:
+        quote = match.group(1)
+        href = match.group(2)
+        rewritten = rewrite_href_value(href, lookup)
+        return f"href={quote}{html.escape(rewritten, quote=True)}{quote}"
+
+    return re.sub(r"href=([\"'])(.*?)\1", repl, fragment, flags=re.I | re.S)
+
+
+def strip_embedded_document_markup(fragment: str) -> str:
+    fragment = re.sub(r"<meta\b[^>]*>", "", fragment, flags=re.I)
+    fragment = re.sub(r"<title\b[^>]*>.*?</title>", "", fragment, flags=re.I | re.S)
+    fragment = re.sub(r"<style\b[^>]*>.*?</style>", "", fragment, flags=re.I | re.S)
+    return fragment
+
+
+def sanitize_fragment(
+    fragment: str, lookup: dict[str, str], *, strip_document_bits: bool = False
+) -> str:
+    fragment = decode_literal_escapes(fragment)
+    if strip_document_bits:
+        fragment = strip_embedded_document_markup(fragment)
+    fragment = rewrite_links(fragment, lookup)
+    fragment = re.sub(r"\s+border=([\"'])0\1", "", fragment, flags=re.I)
+    fragment = re.sub(r"\s+width_o=([\"']).*?\1", "", fragment, flags=re.I | re.S)
+    fragment = re.sub(r"\s+height_o=([\"']).*?\1", "", fragment, flags=re.I | re.S)
+    fragment = re.sub(r"\s+class=([\"'])\1", "", fragment, flags=re.I)
+    return fragment.strip()
+
+
+def filename_from_url(url: str) -> str:
+    clean = re.sub(r"[?#].*$", "", url or "")
+    return urllib.parse.unquote(clean.rstrip("/").split("/")[-1])
+
+
+def local_asset_src_for(url: str) -> str | None:
+    filename = filename_from_url(url)
+    if not filename:
+        return None
+
+    # optimize_images.py may have converted e.g. Foo.png to Foo.jpg.
+    stem = Path(filename).stem
+    candidates = [
+        filename,
+        f"{stem}.jpg",
+        f"{stem}.jpeg",
+        f"{stem}.webp",
+        f"{stem}.png",
+    ]
+    seen: set[str] = set()
+    for name in candidates:
+        if name in seen:
+            continue
+        seen.add(name)
+        candidate = CARGO_ASSETS / name
+        if candidate.exists() and candidate.is_file() and candidate.stat().st_size > 0:
+            return f"assets/cargo/{name}"
+    return None
+
+
+def attr_pattern(attr: str) -> str:
+    # Do not let `src` match the tail of Cargo's `data-src` attribute.
+    return rf"(?<![\w:-]){re.escape(attr)}=([\"'])(.*?)\1"
+
+
+def img_attr(img: str, attr: str) -> str:
+    match = re.search(attr_pattern(attr), img, flags=re.I | re.S)
+    return match.group(2) if match else ""
+
+
+def set_or_replace_img_src(img: str, src: str) -> str:
+    escaped = html.escape(src, quote=True)
+    src_re = attr_pattern("src")
+    data_src_re = attr_pattern("data-src")
+    if re.search(src_re, img, flags=re.I | re.S):
+        img = re.sub(src_re, f'src="{escaped}"', img, count=1, flags=re.I | re.S)
+    elif re.search(data_src_re, img, flags=re.I | re.S):
+        img = re.sub(data_src_re, f'src="{escaped}"', img, count=1, flags=re.I | re.S)
+    else:
+        img = re.sub(r"<img\b", f'<img src="{escaped}"', img, count=1, flags=re.I)
+    img = re.sub(r"\s+(?<![\w:-])data-src=([\"']).*?\1", "", img, flags=re.I | re.S)
+    return img
+
+
+def rewrite_portfolio_gallery(fragment: str, lookup: dict[str, str]) -> str:
+    fragment = sanitize_fragment(fragment, lookup, strip_document_bits=True)
+
+    def repl(match: re.Match[str]) -> str:
+        href = match.group(1)
+        img = match.group(2)
+        target = rewrite_href_value(href, lookup)
+
+        img = re.sub(r"\s+border=([\"'])0\1", "", img, flags=re.I)
+        img = re.sub(r"\s+width_o=([\"']).*?\1", "", img, flags=re.I | re.S)
+        img = re.sub(r"\s+height_o=([\"']).*?\1", "", img, flags=re.I | re.S)
+
+        raw_src = img_attr(img, "src") or img_attr(img, "data-src")
+        local_src = local_asset_src_for(raw_src)
+        if local_src:
+            img = set_or_replace_img_src(img, local_src)
+        elif raw_src and img_attr(img, "data-src"):
+            img = set_or_replace_img_src(img, raw_src)
+
+        caption = decode_literal_escapes(
+            img_attr(img, "data-caption") or img_attr(img, "alt")
+        )
+        caption = strip_tags(caption)
+        return (
+            f'<a href="{html.escape(target, quote=True)}" class="image-link">'
+            f'{img}<span class="tile-caption">{html.escape(caption)}</span></a>'
+        )
+
+    return re.sub(
+        r"<a\b[^>]*href=[\"\']([^\"\']+)[\"\'][^>]*class=[\"\'][^\"\']*\bimage-link\b[^\"\']*[\"\'][^>]*>\s*(<img\b[^>]*>)\s*</a>",
+        repl,
+        fragment,
+        flags=re.I | re.S,
+    )
+
+
+def normalize_project_back_link(fragment: str) -> str:
+    back_html = '<p class="project-back"><a href="portfolio.html" class="back-link">← Back to portfolio</a></p>'
+    fragment = re.sub(
+        r"<h1[^>]*>\s*<a\b[^>]*class=[\"\'][^\"\']*\bicon-link\b[^\"\']*[\"\'][^>]*>.*?</a>\s*</h1>",
+        back_html,
+        fragment,
+        flags=re.I | re.S,
+    )
+    fragment = re.sub(
+        r"<a\b[^>]*class=[\"\'][^\"\']*\bicon-link\b[^\"\']*[\"\'][^>]*>.*?</a>",
+        '<a href="portfolio.html" class="back-link">← Back to portfolio</a>',
+        fragment,
+        flags=re.I | re.S,
+    )
+    fragment = fragment.replace("\ue04a\ufe0e\ufe0e\ufe0e", "")
+    if 'class="back-link"' not in fragment:
+        fragment = fragment.rstrip() + "\n" + back_html
+    return fragment
+
+
+def render_shell(title: str, body_class: str, main_class: str, content: str) -> str:
+    title_escaped = html.escape(title, quote=False)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{title_escaped}</title>
+  <meta name="description" content="Maxim Kelly is a British Director and Photographer based in Barcelona.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="{html.escape(body_class, quote=True)}">
+  <header class="site-header" aria-label="Site header">
+    <a class="brand" href="menu.html">MAXIM KELLY</a>
+    <a class="nav-toggle" href="menu.html" aria-label="Menu">+</a>
+  </header>
+  <main class="{html.escape(main_class, quote=True)}">
+{content}
+  </main>
+</body>
+</html>
+"""
+
+
+def render_redirect(target: str, title: str = "Redirecting") -> str:
+    target_escaped = html.escape(target, quote=True)
+    script_target = json.dumps(target)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{html.escape(title, quote=False)}</title>
+  <link rel="canonical" href="{target_escaped}">
+  <meta http-equiv="refresh" content="0; url={target_escaped}">
+</head>
+<body style="background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;">
+  <main style="min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;">
+    <p>Redirecting to <a style="color:#fff" href="{target_escaped}">{target_escaped}</a></p>
+  </main>
+  <script>window.location.replace({script_target});</script>
+</body>
+</html>
+"""
+
+
+def write_file(relative: str | Path, content: str) -> None:
+    path = SITE / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+
+
+def write_root_redirect(filename: str, target: str) -> None:
+    # macOS is commonly case-insensitive. Writing `Menu.html` after `menu.html`
+    # would overwrite the real page locally, even though GitHub Pages would treat
+    # them as distinct paths. Skip case-only aliases and catch those via the
+    # extensionless directory redirects instead.
+    if filename == target or filename.casefold() == target.casefold():
+        return
+    write_file(filename, render_redirect(target, f"Redirecting to {target}"))
+
+
+def write_directory_redirect(directory: str, target_from_directory: str) -> None:
+    write_file(
+        Path(directory) / "index.html",
+        render_redirect(target_from_directory, "Redirecting"),
+    )
+
+
+def alias_variants(slug: str) -> set[str]:
+    return {
+        slug,
+        slug.lower(),
+        slug.replace("_", "-"),
+        slug.replace("_", "-").lower(),
+        slug.replace("-", "_"),
+        slug.replace("-", "_").lower(),
+    }
+
+
+def build_404_alias_map(project_slugs: list[str]) -> dict[str, str]:
+    aliases: dict[str, str] = {}
+
+    def add(raw: str, target: str) -> None:
+        key = raw.strip("/").lower()
+        if key:
+            aliases[key] = target
+            if key.endswith(".html"):
+                aliases[key[:-5]] = target
+            else:
+                aliases[f"{key}.html"] = target
+
+    for raw, target in {
+        "portfolio": "portfolio.html",
+        "portfolio.html": "portfolio.html",
+        "PORTFOLIO": "portfolio.html",
+        "films": "portfolio.html",
+        "FILMS-1": "portfolio.html",
+        "menu": "menu.html",
+        "Menu": "menu.html",
+        "contact": "contact.html",
+        "Contact": "contact.html",
+        "selected-press": "selected-press.html",
+        "Selected-Press": "selected-press.html",
+        "selected_press": "selected-press.html",
+        "home": "menu.html",
+        "Home": "menu.html",
+    }.items():
+        add(raw, target)
+
+    for slug in project_slugs:
+        target = f"{slug}.html"
+        for variant in alias_variants(slug):
+            add(variant, target)
+            add(f"{variant}.html", target)
+    return aliases
+
+
+def write_404_redirect(project_slugs: list[str]) -> None:
+    alias_map = build_404_alias_map(project_slugs)
+    alias_json = json.dumps(alias_map, ensure_ascii=False, sort_keys=True)
+    content = f"""<!doctype html>
+<html lang=\"en\">
+<head>
+  <meta charset=\"utf-8\">
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <title>Page not found — Maxim Kelly | Director</title>
+  <link rel=\"stylesheet\" href=\"assets/style.css\">
+</head>
+<body>
+  <main class=\"redirect-main\">
+    <p>Looking for the right page…</p>
+  </main>
+  <script>
+    const aliases = {alias_json};
+    const path = window.location.pathname;
+    const trimmed = path.replace(/\\/+$/, '');
+    const slash = trimmed.lastIndexOf('/');
+    const prefix = slash >= 0 ? trimmed.slice(0, slash + 1) : '/';
+    const last = slash >= 0 ? trimmed.slice(slash + 1) : trimmed;
+    const key = decodeURIComponent(last || '').toLowerCase();
+    const target = aliases[key] || aliases[key.replace(/\\.html$/, '')];
+    if (target) {{
+      window.location.replace(prefix + target + window.location.search + window.location.hash);
+    }} else {{
+      const p = document.querySelector('p');
+      const a = document.createElement('a');
+      a.href = prefix + 'menu.html';
+      a.textContent = 'Go to menu';
+      p.textContent = 'Page not found. ';
+      p.appendChild(a);
+    }}
+  </script>
+</body>
+</html>
+"""
+    write_file("404.html", content)
+
+
+def build_site() -> None:
+    rendered_pages = load_rendered_pages()
+    project_slugs = sorted(
+        slug for slug in rendered_pages if slug not in NON_PROJECT_PAGES
+    )
+    lookup = build_lookup(project_slugs)
+
+    STYLE.write_text(SITE_CSS, encoding="utf-8")
+
+    # Menu: explicitly clean and simple, not the broken extracted header-only page.
+    menu_content = """    <div class="menu-wrap">
+      <div class="menu-kicker">Director</div>
+      <nav class="menu-list" aria-label="Main navigation">
+        <a href="portfolio.html">Films</a>
+        <a href="selected-press.html">Selected Press</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>"""
+    write_file(
+        "menu.html",
+        render_shell(
+            "Menu — Maxim Kelly | Director", "menu-page", "menu-main", menu_content
+        ),
+    )
+
+    # Index/home redirects to the menu.
+    write_file("index.html", render_redirect("menu.html", "Maxim Kelly | Director"))
+    write_root_redirect("home.html", "menu.html")
+    write_root_redirect("Home.html", "menu.html")
+
+    # Portfolio gallery.
+    final_portfolio = load_final_page("portfolio.json", "Portfolio")
+    portfolio_fragment = ""
+    if final_portfolio and final_portfolio.get("content"):
+        portfolio_fragment = str(final_portfolio.get("content"))
+    else:
+        portfolio_fragment = str(
+            rendered_pages.get("Portfolio", {}).get("content_html", "")
+        )
+    portfolio_content = rewrite_portfolio_gallery(portfolio_fragment, lookup)
+    write_file(
+        "portfolio.html",
+        render_shell(
+            "Portfolio — Maxim Kelly | Director",
+            "portfolio-page",
+            "portfolio-main",
+            portfolio_content,
+        ),
+    )
+
+    # Contact and Selected Press use final-data because rendered/* captured the pinned header instead.
+    for json_name, project_url, out_name, page_title in [
+        ("contact.json", "Contact", "contact.html", "Contact — Maxim Kelly | Director"),
+        (
+            "selected-press.json",
+            "Selected-Press",
+            "selected-press.html",
+            "Selected Press — Maxim Kelly | Director",
+        ),
+    ]:
+        final_page = load_final_page(json_name, project_url)
+        fragment = (
+            str(final_page.get("content", ""))
+            if final_page
+            else str(rendered_pages.get(project_url, {}).get("content_html", ""))
+        )
+        fragment = sanitize_fragment(fragment, lookup, strip_document_bits=True)
+        content = (
+            f'    <article class="info-content">\n      {fragment}\n    </article>'
+        )
+        body_class = (
+            "contact-page info-page"
+            if out_name == "contact.html"
+            else "press-page info-page"
+        )
+        write_file(out_name, render_shell(page_title, body_class, "info-main", content))
+
+    # Project pages.
+    for slug in project_slugs:
+        data = rendered_pages[slug]
+        fragment = sanitize_fragment(
+            str(data.get("content_html", "")), lookup, strip_document_bits=True
+        )
+        fragment = normalize_project_back_link(fragment)
+        content = (
+            f'    <article class="project-content">\n      {fragment}\n    </article>'
+        )
+        title = f"{project_display_title(slug)} — Maxim Kelly | Director"
+        write_file(
+            f"{slug}.html", render_shell(title, "project-page", "project-main", content)
+        )
+
+    # Root-level aliases for old Cargo/title-case/lowercase routes.
+    top_aliases = {
+        "Menu.html": "menu.html",
+        "Portfolio.html": "portfolio.html",
+        "Contact.html": "contact.html",
+        "Selected-Press.html": "selected-press.html",
+        "selected_press.html": "selected-press.html",
+        "films.html": "portfolio.html",
+        "FILMS-1.html": "portfolio.html",
+    }
+    for alias, target in top_aliases.items():
+        write_root_redirect(alias, target)
+
+    # Directory redirects for old extensionless Cargo links.
+    top_dirs = {
+        "Menu": "../menu.html",
+        "menu": "../menu.html",
+        "Portfolio": "../portfolio.html",
+        "portfolio": "../portfolio.html",
+        "Contact": "../contact.html",
+        "contact": "../contact.html",
+        "Selected-Press": "../selected-press.html",
+        "selected-press": "../selected-press.html",
+        "Home": "../menu.html",
+        "home": "../menu.html",
+        "FILMS-1": "../portfolio.html",
+        "films": "../portfolio.html",
+    }
+    for directory, target in top_dirs.items():
+        write_directory_redirect(directory, target)
+
+    for slug in project_slugs:
+        canonical = f"{slug}.html"
+        # Canonical extensionless directory, e.g. /Vollebak_Sonic/.
+        write_directory_redirect(slug, f"../{canonical}")
+        for variant in sorted(alias_variants(slug)):
+            alias_file = f"{variant}.html"
+            write_root_redirect(alias_file, canonical)
+            # Also catch extensionless lowercase/alternate paths, e.g. /vollebak-sonic/.
+            # Case-only directory variants may collapse on macOS, but they redirect
+            # to the same canonical target so they are harmless.
+            if variant != slug:
+                write_directory_redirect(variant, f"../{canonical}")
+
+    write_404_redirect(project_slugs)
+
+    print(f"built {len(project_slugs)} project pages")
+    print("built menu.html, portfolio.html, contact.html, selected-press.html")
+    print("wrote redirect aliases for old Cargo/lowercase routes")
+
+
+def is_external_href(href: str) -> bool:
+    href = href.strip()
+    return not href or href.startswith(EXTERNAL_HREF_PREFIXES)
+
+
+def validate_internal_links() -> list[tuple[str, str]]:
+    missing: list[tuple[str, str]] = []
+    for path in sorted(SITE.rglob("*.html")):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for raw_href in re.findall(r"href=([\"'])(.*?)\1", text, flags=re.I | re.S):
+            href = html.unescape(raw_href[1]).strip()
+            if is_external_href(href):
+                continue
+            base = href.split("#", 1)[0].split("?", 1)[0]
+            if not base:
+                continue
+            resolved = (path.parent / base).resolve()
+            try:
+                resolved.relative_to(SITE.resolve())
+            except ValueError:
+                continue
+            if not resolved.exists():
+                missing.append((str(path.relative_to(SITE)), href))
+    return missing
+
+
+def validate_no_stale_cargo_links() -> list[tuple[str, str]]:
+    problems: list[tuple[str, str]] = []
+    patterns = [
+        ("PORTFOLIO", re.compile(r"href=[\"\']PORTFOLIO[\"\']", re.I)),
+        ("icon-link", re.compile(r"\bicon-link\b", re.I)),
+        ("Cargo back glyph", re.compile("\ue04a")),
+        ("placeholder", re.compile(r"placeholder|lorem ipsum", re.I)),
+    ]
+    for path in sorted(SITE.rglob("*.html")):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for label, pattern in patterns:
+            if pattern.search(text):
+                problems.append((str(path.relative_to(SITE)), label))
+    return problems
+
+
+def main() -> int:
+    build_site()
+    missing = validate_internal_links()
+    stale = validate_no_stale_cargo_links()
+    if missing:
+        print("\nMissing internal links:")
+        for rel, href in missing[:50]:
+            print(f"  {rel}: {href}")
+        if len(missing) > 50:
+            print(f"  ...and {len(missing) - 50} more")
+    else:
+        print("internal link check: ok")
+    if stale:
+        print("\nStale Cargo/placeholder markers:")
+        for rel, label in stale[:50]:
+            print(f"  {rel}: {label}")
+        if len(stale) > 50:
+            print(f"  ...and {len(stale) - 50} more")
+    else:
+        print("stale Cargo marker check: ok")
+    return 1 if missing or stale else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

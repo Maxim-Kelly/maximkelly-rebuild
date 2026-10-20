@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Local scratch
+.tmp/
+
+# Pre-rebuild backup of the old broken site (large, not needed in git)
+site-backup-before-nav-rebuild/
+
+# Cargo export working data. Kept out of the repo because it is large and
+# already fully superseded by rendered/ + final-data/, which are the source
+# of truth for the generator.
+raw/
+reference-download/
+parsed/
+blocks/
+extracted/

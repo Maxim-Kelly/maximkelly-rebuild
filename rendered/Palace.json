@@ -1,0 +1,12 @@
+{
+  "page": "Palace",
+  "file": "raw/Palace/index.html",
+  "title": "IT'S OVER",
+  "content_html": "<br><h1>IT'S OVER    </h1><h2>PALACE<br></h2><br><br>\n<iframe src=\"https://player.vimeo.com/video/257385566\" width=\"640\" height=\"360\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen=\"\" style=\"width: 640px; height: 360px;\" class=\"\"></iframe><br><br><br>\n<h1><a href=\"PORTFOLIO\" rel=\"history\" class=\"icon-link\">\\ue04a\\ufe0e\\ufe0e\\ufe0e</a></h1>",
+  "content_text": "IT'S OVER    PALACE\n\n\\ue04a\\ufe0e\\ufe0e\\ufe0e",
+  "vimeo": [
+    "https://player.vimeo.com/video/257385566"
+  ],
+  "youtube": [],
+  "images": []
+}
