@@ -1020,10 +1020,22 @@ def validate_no_stale_cargo_links() -> list[tuple[str, str]]:
     return problems
 
 
+def validate_images() -> list[tuple[str, str]]:
+    """Every local image a page references must exist on disk."""
+    missing: list[tuple[str, str]] = []
+    for path in sorted(SITE.rglob("*.html")):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for src in re.findall(r'src="(assets/[^"]+)"', text):
+            if not (SITE / src).exists():
+                missing.append((str(path.relative_to(SITE)), src))
+    return missing
+
+
 def main() -> int:
     build_site()
     missing = validate_internal_links()
     stale = validate_no_stale_cargo_links()
+    broken_images = validate_images()
     if missing:
         print("\nMissing internal links:")
         for rel, href in missing[:50]:
@@ -1040,7 +1052,15 @@ def main() -> int:
             print(f"  ...and {len(stale) - 50} more")
     else:
         print("stale Cargo marker check: ok")
-    return 1 if missing or stale else 0
+    if broken_images:
+        print("\nMissing images:")
+        for rel, src in broken_images[:50]:
+            print(f"  {rel}: {src}")
+        if len(broken_images) > 50:
+            print(f"  ...and {len(broken_images) - 50} more")
+    else:
+        print("image check: ok")
+    return 1 if missing or stale or broken_images else 0
 
 
 if __name__ == "__main__":
