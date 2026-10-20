@@ -147,6 +147,179 @@ img,video{display:block;max-width:100%;height:auto}
 )
 
 
+THEME_CSS = (
+    """
+:root{
+  --bg:#0a0a0b;
+  --fg:#f2f1ed;
+  --muted:#a8a59e;
+  --dim:#6e6b65;
+  --rule:rgba(242,241,237,.13);
+  --pad:clamp(20px,3.5vw,64px);
+  --font:'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:var(--font);min-height:100%}
+body{font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.006em}
+a{color:inherit;text-decoration:none}
+img,video{display:block;max-width:100%;height:auto}
+.site-header{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;justify-content:space-between;align-items:baseline;padding:22px var(--pad);pointer-events:none;background:linear-gradient(to bottom,rgba(10,10,11,.94),rgba(10,10,11,.55) 55%,rgba(10,10,11,0))}
+.site-header a{pointer-events:auto;transition:opacity .25s ease}
+.site-header a:hover{opacity:.5;text-decoration:none}
+.brand{font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+.nav-toggle{font-size:22px;line-height:1}
+.menu-main{min-height:100vh;display:flex;align-items:center;padding:calc(var(--pad) + 84px) var(--pad) var(--pad)}
+.menu-wrap{width:100%;max-width:1120px;margin:0 auto}
+.menu-kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);margin-bottom:clamp(26px,4vw,52px)}
+.menu-list{display:grid}
+.menu-list a{display:flex;align-items:baseline;justify-content:space-between;gap:1.5rem;padding:clamp(14px,2vw,26px) 0;border-top:1px solid var(--rule);font-size:clamp(32px,6.4vw,84px);line-height:1;letter-spacing:-.05em;transition:opacity .3s ease,padding-left .35s ease}
+.menu-list a:last-child{border-bottom:1px solid var(--rule)}
+.menu-list a:hover{opacity:.5;padding-left:.4em;text-decoration:none}
+.menu-list .idx{font-size:10px;letter-spacing:.26em;color:var(--dim)}
+.portfolio-main{min-height:100vh;padding:0;margin:0}
+.image-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;background:var(--bg)}
+.image-gallery .image-link{position:relative;display:block;overflow:hidden;background:#101012}
+.image-gallery img{width:100%;height:auto;display:block;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .5s ease}
+.image-gallery .image-link:hover img{transform:scale(1.04)}
+.tile-caption{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:clamp(20px,2.6vw,32px) clamp(16px,2vw,26px);font-size:clamp(10px,.82vw,12px);letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.92);background:linear-gradient(to top,rgba(0,0,0,.68),rgba(0,0,0,0))}
+.tile-caption:empty{display:none}
+.project-main{min-height:100vh;display:flex;justify-content:center;padding:calc(var(--pad) + 98px) var(--pad) var(--pad)}
+.project-content{width:min(100%,1080px);margin:0 auto;text-align:center}
+.project-back{margin:0 0 clamp(22px,3.5vw,42px);text-align:left}
+.project-back--bottom{margin:clamp(38px,6vw,72px) 0 0}
+.project-back a{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--rule);padding-bottom:3px;transition:color .25s ease,border-color .25s ease}
+.project-back a:hover{color:var(--fg);border-bottom-color:var(--fg);text-decoration:none}
+.project-head h1{margin:0;font-size:clamp(30px,5.2vw,72px);line-height:.96;letter-spacing:-.055em;font-weight:400}
+.project-head h2{margin:clamp(14px,1.8vw,22px) 0 0;font-size:clamp(11px,1vw,13px);letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.project-player{margin:clamp(38px,6vw,80px) 0 0}
+.project-player iframe{width:100%!important;height:auto!important;aspect-ratio:16/9;border:0;display:block;background:#000;box-shadow:0 40px 100px rgba(0,0,0,.55)}
+.project-credits{margin:clamp(36px,5vw,64px) auto 0;display:grid;gap:clamp(16px,2.2vw,26px);max-width:560px;text-align:left}
+.credit{display:grid;gap:5px;padding-top:15px;border-top:1px solid var(--rule)}
+.credit-label{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim)}
+.credit-value{font-size:clamp(14px,1.3vw,18px);letter-spacing:-.015em;line-height:1.32}
+.info-main{padding:calc(var(--pad) + 108px) var(--pad) var(--pad)}
+.info-content{width:min(100%,1120px);margin:0 auto}
+.info-content .rule{border:0;border-top:1px solid var(--rule);margin:clamp(26px,3.5vw,44px) 0}
+.info-content [grid-row]{display:grid;grid-template-columns:minmax(160px,.62fr) minmax(0,1.6fr);gap:clamp(18px,3vw,56px);align-items:start}
+.info-content [grid-col]{min-width:0}
+.info-content [grid-col] h1,.info-content [grid-col] h2{margin:0}
+.info-content [grid-col]:nth-child(1) h1{font-size:clamp(11px,1vw,13px);letter-spacing:.26em;text-transform:uppercase;color:var(--dim);line-height:1.6}
+.info-content [grid-col]:nth-child(2) h2{margin:0 0 8px;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--dim)}
+.info-content [grid-col]:nth-child(2) h1{font-size:clamp(17px,1.9vw,27px);letter-spacing:-.035em;line-height:1.2}
+.info-content a{border-bottom:1px solid var(--rule);padding-bottom:2px;transition:border-color .25s ease,opacity .25s ease}
+.info-content a:hover{border-bottom-color:var(--fg);opacity:.85;text-decoration:none}
+.redirect-main{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:var(--pad)}
+@media (max-width:760px){
+  .site-header{padding:16px}
+  .image-gallery{grid-template-columns:1fr}
+  .tile-caption{font-size:11px;letter-spacing:.18em;padding:38px 14px 12px}
+  .project-main,.info-main,.menu-main{padding-left:16px;padding-right:16px}
+  .info-content [grid-row]{grid-template-columns:1fr;gap:8px}
+  .info-content [grid-col]:nth-child(2) h1{font-size:22px}
+  .menu-list a{font-size:clamp(30px,11vw,52px)}
+}
+""".strip()
+    + "\n"
+)
+
+BACK_TOP = '<p class="project-back"><a href="portfolio.html">\u2190 Portfolio</a></p>'
+BACK_BOTTOM = (
+    '<p class="project-back project-back--bottom">'
+    '<a href="portfolio.html">\u2190 Back to portfolio</a></p>'
+)
+
+
+def clean_content_noise(fragment: str) -> str:
+    """Strip Cargo editor layout noise so the stylesheet owns presentation."""
+    fragment = re.sub(r'\s+style="[^"]*"', "", fragment, flags=re.I)
+    fragment = re.sub(r"\s+style='[^']*'", "", fragment, flags=re.I)
+    # Columns the Cargo grid left empty.
+    fragment = re.sub(r"<div[^>]*grid-col[^>]*>\s*</div>", "", fragment, flags=re.I)
+    # Runs of <br> are only spacing; a single break inside a heading is real.
+    fragment = re.sub(r"(?:<br\s*/?>\s*){2,}", "", fragment, flags=re.I)
+    # Drop breaks that only hug a block boundary.
+    fragment = re.sub(
+        r"<br\s*/?>\s*(</?(?:div|h[12]|p|article|main|nav)\b)", r"\1", fragment, flags=re.I
+    )
+    fragment = re.sub(
+        r"(</?(?:div|h[12]|p|article|main|nav)\b[^>]*>)\s*<br\s*/?>",
+        r"\1",
+        fragment,
+        flags=re.I,
+    )
+    fragment = re.sub(r"<hr\b[^>]*>", '<div class="rule"></div>', fragment, flags=re.I)
+    # Rows that held nothing but empty columns.
+    fragment = re.sub(r"<div[^>]*grid-row[^>]*>\s*</div>", "", fragment, flags=re.I)
+    return fragment.strip()
+
+
+def build_credit_rows(fragment: str) -> str:
+    """Group the h1/h2 award pairs into tidy credit rows."""
+    items = re.findall(r"<h([12])[^>]*>(.*?)</h\1>", fragment, flags=re.I | re.S)
+    rows: list[tuple[str, str]] = []
+    pending = ""
+    for level, text in items:
+        text = strip_tags(text).strip()
+        if not text:
+            continue
+        if level == "1":
+            if pending:
+                rows.append((pending, ""))
+            pending = text
+        elif pending:
+            rows.append((pending, text))
+            pending = ""
+        else:
+            rows.append(("", text))
+    if pending:
+        rows.append((pending, ""))
+    if not rows:
+        return ""
+    body = "\n".join(
+        '<div class="credit">'
+        f'<span class="credit-label">{html.escape(label)}</span>'
+        f'<span class="credit-value">{html.escape(value)}</span>'
+        "</div>"
+        for label, value in rows
+    )
+    return f'<div class="project-credits">\n{body}\n</div>'
+
+
+def build_project_content(fragment: str) -> str:
+    """Turn a raw Cargo project body into a structured, designed page."""
+    fragment = re.sub(
+        r"<h1[^>]*>\s*<a\b[^>]*icon-link[^>]*>.*?</a>\s*</h1>",
+        "",
+        fragment,
+        flags=re.I | re.S,
+    )
+    fragment = re.sub(r"<a\b[^>]*icon-link[^>]*>.*?</a>", "", fragment, flags=re.I | re.S)
+    fragment = re.sub(r'<p class="project-back[^"]*"[^>]*>.*?</p>', "", fragment, flags=re.I | re.S)
+    fragment = fragment.replace("\ue04a\ufe0e\ufe0e\ufe0e", "")
+
+    match = re.search(r"<iframe\b[^>]*>.*?</iframe>", fragment, flags=re.I | re.S)
+    if match:
+        head = fragment[: match.start()]
+        player = match.group(0)
+        credits_raw = fragment[match.end() :]
+    else:
+        head, player, credits_raw = fragment, "", ""
+
+    head_html = clean_content_noise(head)
+    credits_html = build_credit_rows(credits_raw)
+
+    parts = [BACK_TOP]
+    if head_html:
+        parts.append(f'<div class="project-head">\n{head_html}\n</div>')
+    if player:
+        parts.append(f'<div class="project-player">\n{player}\n</div>')
+    if credits_html:
+        parts.append(credits_html)
+    parts.append(BACK_BOTTOM)
+    return "\n".join(parts)
+
+
 def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -598,15 +771,15 @@ def build_site() -> None:
     )
     lookup = build_lookup(project_slugs)
 
-    STYLE.write_text(SITE_CSS, encoding="utf-8")
+    STYLE.write_text(THEME_CSS, encoding="utf-8")
 
     # Menu: explicitly clean and simple, not the broken extracted header-only page.
     menu_content = """    <div class="menu-wrap">
-      <div class="menu-kicker">Director</div>
+      <div class="menu-kicker">Maxim Kelly \u2014 Director</div>
       <nav class="menu-list" aria-label="Main navigation">
-        <a href="portfolio.html">Films</a>
-        <a href="selected-press.html">Selected Press</a>
-        <a href="contact.html">Contact</a>
+        <a href="portfolio.html"><span>Films</span><span class="idx">01</span></a>
+        <a href="selected-press.html"><span>Selected Press</span><span class="idx">02</span></a>
+        <a href="contact.html"><span>Contact</span><span class="idx">03</span></a>
       </nav>
     </div>"""
     write_file(
@@ -658,6 +831,7 @@ def build_site() -> None:
             else str(rendered_pages.get(project_url, {}).get("content_html", ""))
         )
         fragment = sanitize_fragment(fragment, lookup, strip_document_bits=True)
+        fragment = clean_content_noise(fragment)
         content = (
             f'    <article class="info-content">\n      {fragment}\n    </article>'
         )
@@ -674,7 +848,7 @@ def build_site() -> None:
         fragment = sanitize_fragment(
             str(data.get("content_html", "")), lookup, strip_document_bits=True
         )
-        fragment = normalize_project_back_link(fragment)
+        fragment = build_project_content(fragment)
         content = (
             f'    <article class="project-content">\n      {fragment}\n    </article>'
         )
