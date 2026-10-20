@@ -1,6 +1,11 @@
 # macOS
 .DS_Store
 
+# Editor / backup leftovers — never deploy these
+*.bak
+*.orig
+*~
+
 # Local scratch
 .tmp/
 
