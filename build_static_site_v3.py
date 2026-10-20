@@ -15,9 +15,12 @@ import urllib.parse
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 ROOT = Path(__file__).resolve().parent
 RENDERED = ROOT / "rendered"
 FINAL_DATA = ROOT / "final-data"
+CONTENT = ROOT / "content"
 SITE = ROOT / "site"
 ASSETS = SITE / "assets"
 CARGO_ASSETS = ASSETS / "cargo"
@@ -248,6 +251,124 @@ def build_project_content(fragment: str) -> str:
         parts.append(credits_html)
     parts.append(BACK_BOTTOM)
     return "\n".join(parts)
+
+
+# --- content/ : plain-YAML source of truth -------------------------------
+
+LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
+
+
+def load_yaml(path: Path) -> Any:
+    if not path.exists():
+        return None
+    with path.open(encoding="utf-8") as fh:
+        return yaml.safe_load(fh)
+
+
+def inline_markup(value: str) -> str:
+    """Render [text](url) links and escape everything else."""
+    out: list[str] = []
+    pos = 0
+    for match in LINK_RE.finditer(value):
+        out.append(html.escape(value[pos : match.start()]))
+        out.append(
+            f'<a href="{html.escape(match.group(2), quote=True)}">'
+            f"{html.escape(match.group(1))}</a>"
+        )
+        pos = match.end()
+    out.append(html.escape(value[pos:]))
+    return "".join(out)
+
+
+def build_project_from_yaml(doc: dict[str, Any]) -> str:
+    title = html.escape(str(doc.get("title") or ""))
+    artist = html.escape(str(doc.get("artist") or ""))
+    parts = [
+        BACK_TOP,
+        f'<div class="project-head">\n<h1>{title}</h1><h2>{artist}</h2>\n</div>',
+    ]
+
+    vimeo = str(doc.get("vimeo") or "").strip()
+    if vimeo:
+        parts.append(
+            '<div class="project-player">\n'
+            f'<iframe src="{html.escape(vimeo, quote=True)}" '
+            'frameborder="0" allow="autoplay; fullscreen; picture-in-picture" '
+            "allowfullscreen></iframe>\n</div>"
+        )
+
+    credits = doc.get("credits") or []
+    if credits:
+        rows = []
+        for credit in credits:
+            label = html.escape(str(credit.get("label") or ""))
+            value = html.escape(str(credit.get("value") or ""))
+            rows.append(
+                '<div class="credit">'
+                f'<span class="credit-label">{label}</span>'
+                f'<span class="credit-value">{value}</span>'
+                "</div>"
+            )
+        parts.append(f'<div class="project-credits">\n{"\n".join(rows)}\n</div>')
+
+    parts.append(BACK_BOTTOM)
+    return "\n".join(parts)
+
+
+def build_portfolio_from_yaml(tiles: list[dict[str, Any]]) -> str:
+    cells = []
+    for tile in tiles:
+        slug = html.escape(str(tile.get("slug") or ""), quote=True)
+        caption = html.escape(str(tile.get("caption") or ""))
+        image = str(tile.get("image") or "").strip()
+        src = html.escape(f"assets/cargo/{image}" if image else "", quote=True)
+        width = tile.get("width")
+        height = tile.get("height")
+        size = f' width="{int(width)}" height="{int(height)}"' if width and height else ""
+        cells.append(
+            f'<a href="{slug}.html" class="image-link">'
+            f'<span class="tile-media"><img{size} src="{src}" '
+            f'alt="{caption}" data-caption="{caption}"/></span>'
+            f'<span class="tile-caption">{caption}</span></a>'
+        )
+    return '<div class="image-gallery">\n' + "\n".join(cells) + "\n</div>"
+
+
+def build_info_from_yaml(
+    rows: list[dict[str, Any]], *, kind: str
+) -> str:
+    blocks = []
+    for row in rows:
+        if kind == "contact":
+            left = f"<h1>{html.escape(str(row.get('region') or ''))}"
+            if row.get("org"):
+                url = html.escape(str(row.get("org_url") or ""), quote=True)
+                left += f'<br><a href="{url}" target="_blank">{html.escape(str(row["org"]))}</a>'
+            left += "</h1>"
+
+            right = f"<h2>{html.escape(str(row.get('person') or ''))}</h2>"
+            if row.get("email"):
+                email = str(row["email"])
+                right += (
+                    f'<h1><a href="mailto:{html.escape(email, quote=True)}">'
+                    f"{html.escape(email)}</a></h1>"
+                )
+        else:
+            left = f"<h1>{html.escape(str(row.get('outlet') or ''))}</h1>"
+            inner = []
+            for group in row.get("groups") or []:
+                inner.append(f"<h2>{html.escape(str(group.get('label') or ''))}</h2>")
+                for item in group.get("items") or []:
+                    inner.append(f"<h1>{inline_markup(str(item))}</h1>")
+            right = "<div>" + "\n".join(inner) + "</div>"
+
+        blocks.append(
+            '<div grid-row>\n'
+            f"<div grid-col><div>{left}</div></div>\n"
+            f"<div grid-col><div>{right}</div></div>\n"
+            '</div>\n<div class="rule"></div>'
+        )
+    return "\n".join(blocks)
 
 
 def read_json(path: Path) -> Any:
@@ -700,6 +821,11 @@ def build_site() -> None:
     project_slugs = sorted(
         slug for slug in rendered_pages if slug not in NON_PROJECT_PAGES
     )
+    # A project can also exist only in content/projects/, so it needs no JSON at all.
+    for path in sorted((CONTENT / "projects").glob("*.yml")):
+        if path.stem not in project_slugs:
+            project_slugs.append(path.stem)
+    project_slugs.sort()
     lookup = build_lookup(project_slugs)
 
     STYLE.write_text(THEME_CSS, encoding="utf-8")
@@ -726,15 +852,19 @@ def build_site() -> None:
     write_root_redirect("Home.html", "menu.html")
 
     # Portfolio gallery.
-    final_portfolio = load_final_page("portfolio.json", "Portfolio")
-    portfolio_fragment = ""
-    if final_portfolio and final_portfolio.get("content"):
-        portfolio_fragment = str(final_portfolio.get("content"))
+    tiles = load_yaml(CONTENT / "portfolio.yml")
+    if tiles:
+        portfolio_content = build_portfolio_from_yaml(tiles)
     else:
-        portfolio_fragment = str(
-            rendered_pages.get("Portfolio", {}).get("content_html", "")
-        )
-    portfolio_content = rewrite_portfolio_gallery(portfolio_fragment, lookup)
+        final_portfolio = load_final_page("portfolio.json", "Portfolio")
+        portfolio_fragment = ""
+        if final_portfolio and final_portfolio.get("content"):
+            portfolio_fragment = str(final_portfolio.get("content"))
+        else:
+            portfolio_fragment = str(
+                rendered_pages.get("Portfolio", {}).get("content_html", "")
+            )
+        portfolio_content = rewrite_portfolio_gallery(portfolio_fragment, lookup)
     write_file(
         "portfolio.html",
         render_shell(
@@ -755,14 +885,19 @@ def build_site() -> None:
             "Selected Press — Maxim Kelly | Director",
         ),
     ]:
-        final_page = load_final_page(json_name, project_url)
-        fragment = (
-            str(final_page.get("content", ""))
-            if final_page
-            else str(rendered_pages.get(project_url, {}).get("content_html", ""))
-        )
-        fragment = sanitize_fragment(fragment, lookup, strip_document_bits=True)
-        fragment = clean_content_noise(fragment)
+        kind = "contact" if out_name == "contact.html" else "press"
+        source = load_yaml(CONTENT / f"{kind}.yml")
+        if source:
+            fragment = build_info_from_yaml(source, kind=kind)
+        else:
+            final_page = load_final_page(json_name, project_url)
+            fragment = (
+                str(final_page.get("content", ""))
+                if final_page
+                else str(rendered_pages.get(project_url, {}).get("content_html", ""))
+            )
+            fragment = sanitize_fragment(fragment, lookup, strip_document_bits=True)
+            fragment = clean_content_noise(fragment)
         content = (
             f'    <article class="info-content">\n      {fragment}\n    </article>'
         )
@@ -775,11 +910,15 @@ def build_site() -> None:
 
     # Project pages.
     for slug in project_slugs:
-        data = rendered_pages[slug]
-        fragment = sanitize_fragment(
-            str(data.get("content_html", "")), lookup, strip_document_bits=True
-        )
-        fragment = build_project_content(fragment)
+        doc = load_yaml(CONTENT / "projects" / f"{slug}.yml")
+        if doc:
+            fragment = build_project_from_yaml(doc)
+        else:
+            data = rendered_pages[slug]
+            fragment = sanitize_fragment(
+                str(data.get("content_html", "")), lookup, strip_document_bits=True
+            )
+            fragment = build_project_content(fragment)
         content = (
             f'    <article class="project-content">\n      {fragment}\n    </article>'
         )

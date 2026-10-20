@@ -1,0 +1,23 @@
+- region: UK
+  person: Luke Jacobs
+  email: luke@friendlondon.tv
+  org: Friend
+  org_url: http://www.friendlondon.tv
+- region: MUSIC VIDEOS
+  person: Sam Davey
+  email: sam@hurrysundown.com
+  org: Hurry Sundown
+  org_url: http://www.hurrysundown.com
+- region: IRELAND
+  person: Peter Kilmartin
+  email: peter@spicydogmedia.ie
+  org: Chaser
+  org_url: http://www.caviar.tv
+- region: SPAIN
+  person: Álvaro Priante
+  email: alvaro.priante@grayskull.tv
+  org: Grayskull
+  org_url: https://www.grayskull.tv/maxim-kelly
+- region: PERSONAL
+  person: Maxim Kelly
+  email: maxim@maximkelly.com

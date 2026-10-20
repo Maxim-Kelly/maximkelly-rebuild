@@ -1,0 +1,40 @@
+- outlet: CANAL180
+  groups:
+  - label: DIRECTOR ID
+    items:
+    - '[| MAXIM](https://www.youtube.com/watch?v=R1kynNdp0K8) KELLY'
+- outlet: PROMONEWS
+  groups:
+  - label: INTERVIEW
+    items:
+    - '2024: [MOLCHAT DOMA & PREFUSE 73](https://www.promonews.tv/interviews/maxim-kelly-his-new-videos-molchat-doma-and-prefuse-73-im-excited-about-future-filmmaking/87452)'
+    - '2022: [BLACK COUNTRY, NEW ROAD](https://www.promonews.tv/interviews/maxim-kelly-making-black-country-new-roads-concorde-video-i-tried-be-more-instinctive/74714)'
+  - label: 'BEST MUSIC VIDEOS OF 2022: ROCK AND ALTERNATIVE'
+    items:
+    - '[BLACK COUNTRY, NEW ROAD & BLACK MIDI](https://www.promonews.tv/playlists/best-music-videos-2022-rock-and-alternative/79863)'
+  - label: 'BEST MUSIC VIDEOS OF 2022: DANCE AND ELECTRONIC'
+    items:
+    - '[BELIEF, DREAMS](https://www.promonews.tv/playlists/best-music-videos-2022-dance-and-electronic/79861)'
+  - label: BEHIND THE VIDEOS
+    items:
+    - '[DJANGO DJANGO & SHAME](https://www.promonews.tv/interviews/behind-django-djangos-spirals-and-shames-nigel-hitter-videos-maxim-kelly-and-charlie/69384)'
+- outlet: '1.4'
+  groups:
+  - label: INTERVIEW
+    items:
+    - '[RAVE REVIEW: BELIEF, DREAMS](https://www.onepointfour.co/2022/10/07/rave-review/)'
+  - label: SIX OF THE BEST
+    items:
+    - '[BLACK MIDI](https://www.onepointfour.co/2022/07/08/six-of-the-best-creative-music-videos-part-1-14/)'
+- outlet: DAVID REVIEWS
+  groups:
+  - label: REVIEWS
+    items:
+    - '[HOT CHIP: BROKEN](https://www.davidreviews.com/work/2022/Hot_Chip_Broken/) ★★★★★'
+    - '[THE MURDER CAPITAL: ETHEL](https://www.davidreviews.com/work/2022/The_Murder_Capital_Ethel/) ★★★★★'
+    - '[BELIEF: DREAMS](https://www.davidreviews.com/work/2022/Belief_Dreams/) ★★★★★'
+    - '[BLACK MIDI: EAT MEN EAT](https://www.davidreviews.com/work/2022/Black_Midi_Eat_Men_Eat/) ★★★★★'
+    - '[BC,NR: CONCORDE](https://www.davidreviews.com/work/2022/Black_Country_New_Road_Concorde/) ★★★★★'
+    - 'TIÑA: THE CLOSEST SHAVE ★★★★'
+    - 'SHAME: NIGEL HITTER ★★★★★'
+    - '[DJANGO DJANGO: SPIRALS](http://) ★★★★★'
