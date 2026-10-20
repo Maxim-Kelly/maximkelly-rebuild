@@ -7,6 +7,7 @@ and the small shared stylesheet used by those HTML files.
 
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 import re
@@ -116,9 +117,9 @@ img,video{display:block;max-width:100%;height:auto}
 .info-content [grid-col]{min-width:0}
 .info-content [grid-col] h1,.info-content [grid-col] h2{margin:0}
 .info-content [grid-col]:nth-child(1) h1{font-size:clamp(var(--text-caption),1vw,.8125rem);letter-spacing:.26em;text-transform:uppercase;color:var(--dim);line-height:1.6}
-.info-content [grid-col]:nth-child(2) h2{margin-block:clamp(24px,3.2vw,38px) 10px;font-size:var(--text-caption);line-height:1.2;letter-spacing:.26em;text-transform:uppercase;color:var(--dim)}
+.info-content [grid-col]:nth-child(2) h2{margin-block-start:clamp(34px,4.6vw,58px);margin-block-end:12px;font-size:var(--text-caption);line-height:1.2;letter-spacing:.26em;text-transform:uppercase;color:var(--muted)}
 .info-content [grid-col]:nth-child(2) h2:first-child{margin-block-start:0}
-.info-content [grid-col]:nth-child(2) h1{margin-block-start:12px;font-size:clamp(1.0625rem,1.5vw,1.3125rem);letter-spacing:-.02em;line-height:1.35;text-wrap:balance}
+.info-content [grid-col]:nth-child(2) h1{margin-block-start:10px;font-size:clamp(1.0625rem,1.5vw,1.3125rem);letter-spacing:-.02em;line-height:1.35;text-wrap:balance}
 .info-content [grid-col]:nth-child(2) h2 + h1{margin-block-start:0}
 .info-content a{border-bottom:1px solid var(--rule);padding-bottom:2px;overflow-wrap:anywhere;transition:border-color .25s ease,opacity .25s ease}
 .info-content a:hover{border-bottom-color:var(--fg);opacity:.85;text-decoration:none}
@@ -135,6 +136,9 @@ img,video{display:block;max-width:100%;height:auto}
 """.strip()
     + "\n"
 )
+
+STYLE_VERSION = hashlib.sha1(THEME_CSS.encode("utf-8")).hexdigest()[:8]
+STYLESHEET = f"assets/style.css?v={STYLE_VERSION}"
 
 BACK_TOP = '<p class="project-back"><a href="portfolio.html">\u2190 Portfolio</a></p>'
 BACK_BOTTOM = (
@@ -541,7 +545,7 @@ def render_shell(title: str, body_class: str, main_class: str, content: str) -> 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title_escaped}</title>
   <meta name="description" content="Maxim Kelly is a British Director and Photographer based in Barcelona.">
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="{STYLESHEET}">
 </head>
 <body class="{html.escape(body_class, quote=True)}">
   <header class="site-header" aria-label="Site header">
@@ -659,7 +663,7 @@ def write_404_redirect(project_slugs: list[str]) -> None:
   <meta charset=\"utf-8\">
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
   <title>Page not found — Maxim Kelly | Director</title>
-  <link rel=\"stylesheet\" href=\"assets/style.css\">
+  <link rel=\"stylesheet\" href=\"{STYLESHEET}\">
 </head>
 <body>
   <main class=\"redirect-main\">
