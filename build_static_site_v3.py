@@ -58,6 +58,12 @@ EXTERNAL_HREF_PREFIXES = (
 
 THEME_CSS = (
     """
+@font-face{
+  font-family:'Archivo';
+  src:url('fonts/archivo-var.ttf') format('truetype');
+  font-weight:100 900;
+  font-display:swap;
+}
 :root{
   --bg:#0a0a0b;
   --fg:#f2f1ed;
@@ -66,7 +72,7 @@ THEME_CSS = (
   --rule:rgba(242,241,237,.13);
   --pad:clamp(20px,3.5vw,64px);
   --header-height:4.5rem;
-  --font:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
   --text-caption:.75rem;
   --text-body:1rem;
   --text-title:1.6875rem;
@@ -81,8 +87,7 @@ img,video{display:block;max-width:100%;height:auto}
 .site-header{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;justify-content:space-between;align-items:baseline;padding:22px var(--pad);pointer-events:none;background:linear-gradient(to bottom,rgba(10,10,11,.94),rgba(10,10,11,.55) 55%,rgba(10,10,11,0))}
 .site-header a{pointer-events:auto;transition:opacity .25s ease}
 .site-header a:hover{opacity:.5;text-decoration:none}
-.brand{font-size:var(--text-caption);line-height:1.2;letter-spacing:.22em;text-transform:uppercase;font-weight:500}
-.nav-toggle{font-size:1.375rem;line-height:1.1}
+.brand,.nav-toggle{font-size:var(--text-caption);line-height:1.2;letter-spacing:.22em;text-transform:uppercase;font-weight:500}
 .menu-main{min-height:100vh;min-height:100dvh;display:flex;align-items:center;padding:calc(var(--pad) + 84px) var(--pad) var(--pad)}
 .menu-wrap{width:100%;max-width:1120px;margin:0 auto}
 .menu-kicker{font-size:var(--text-caption);line-height:1.2;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);margin-bottom:clamp(26px,4vw,52px)}
@@ -92,12 +97,13 @@ img,video{display:block;max-width:100%;height:auto}
 .menu-list a:hover{opacity:.5;padding-inline-start:.4em;text-decoration:none}
 .menu-list .idx{font-size:var(--text-caption);line-height:1.2;letter-spacing:.26em;color:var(--dim)}
 .portfolio-main{min-height:100vh;min-height:100dvh;padding:0;margin:0}
-.image-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;background:var(--bg)}
-.image-gallery .image-link{position:relative;display:block;background:#101012}
-.image-gallery .tile-media{display:block;overflow:hidden}
-.image-gallery img{width:100%;height:auto;display:block;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .5s ease}
+.image-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px;background:var(--bg)}
+.image-gallery .image-link{display:flex;flex-direction:column;background:var(--bg);text-decoration:none}
+.image-gallery .tile-media{display:block;overflow:hidden;aspect-ratio:16/9;background:#101012}
+.image-gallery img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .5s ease}
 .image-gallery .image-link:hover img{transform:scale(1.04)}
-.tile-caption{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:clamp(20px,2.6vw,32px) clamp(16px,2vw,26px);font-size:clamp(var(--text-caption),.82vw,.8125rem);line-height:1.2;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.92);background:linear-gradient(to top,rgba(0,0,0,.68),rgba(0,0,0,0))}
+.tile-caption{display:block;padding:12px 2px 0;font-size:clamp(.8125rem,1vw,.9375rem);line-height:1.3;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .25s ease}
+.image-gallery .image-link:hover .tile-caption{color:var(--fg)}
 .tile-caption:empty{display:none}
 .project-main{min-height:100vh;min-height:100dvh;display:flex;justify-content:center;padding:calc(var(--pad) + 98px) var(--pad) var(--pad)}
 .project-content{width:min(100%,1080px);margin:0 auto;text-align:center}
@@ -113,6 +119,11 @@ img,video{display:block;max-width:100%;height:auto}
 .credit{display:grid;gap:5px;padding-top:15px;border-top:1px solid var(--rule)}
 .credit-label{font-size:var(--text-caption);line-height:1.2;letter-spacing:.26em;text-transform:uppercase;color:var(--dim)}
 .credit-value{font-size:clamp(.875rem,1.3vw,1.125rem);letter-spacing:-.015em;line-height:1.45;overflow-wrap:break-word}
+.project-next{margin:clamp(40px,6vw,72px) auto 0;width:min(100%,640px);border-top:1px solid var(--rule);padding-top:clamp(18px,2.4vw,26px)}
+.project-next a{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;text-decoration:none}
+.project-next-label{font-size:var(--text-caption);letter-spacing:.26em;text-transform:uppercase;color:var(--dim)}
+.project-next-title{font-size:clamp(1.0625rem,1.6vw,1.375rem);letter-spacing:-.02em;color:var(--fg);transition:opacity .25s ease}
+.project-next a:hover .project-next-title{opacity:.65}
 .info-main{padding:calc(var(--pad) + 108px) var(--pad) var(--pad)}
 .info-content{width:min(100%,1120px);margin:0 auto}
 .info-content .rule{border:0;border-top:1px solid var(--rule);margin:clamp(26px,3.5vw,44px) 0}
@@ -127,10 +138,17 @@ img,video{display:block;max-width:100%;height:auto}
 .info-content a{border-bottom:1px solid var(--rule);padding-bottom:2px;overflow-wrap:anywhere;transition:border-color .25s ease,opacity .25s ease}
 .info-content a:hover{border-bottom-color:var(--fg);opacity:.85;text-decoration:none}
 .redirect-main{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;text-align:center;padding:var(--pad)}
+.reel-page{margin:0;background:#000;overflow:hidden}
+.reel{position:fixed;inset:0;display:block;text-decoration:none;color:#fff;background:#000 url('cargo/reel-poster.jpg') center/cover no-repeat}
+.reel-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.reel::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.62),rgba(0,0,0,0) 45%)}
+.reel-enter{position:absolute;right:var(--pad);bottom:var(--pad);z-index:2;font-size:var(--text-caption);letter-spacing:.28em;text-transform:uppercase;color:var(--muted);transition:color .25s ease}
+.reel:hover .reel-enter{color:var(--fg)}
+@media (prefers-reduced-motion:reduce){.reel-video{display:none}}
 @media (max-width:760px){
   .site-header{padding:16px}
   .image-gallery{grid-template-columns:repeat(1,minmax(0,1fr))}
-  .tile-caption{font-size:var(--text-caption);letter-spacing:.18em;padding:38px 14px 12px}
+  .tile-caption{font-size:var(--text-caption);letter-spacing:.14em;padding:10px 2px 0}
   .project-main,.info-main,.menu-main{padding-inline:16px}
   .info-content [grid-row]{grid-template-columns:minmax(0,1fr);gap:8px}
   .info-content [grid-col]:nth-child(2) h1{font-size:1.125rem}
@@ -287,7 +305,9 @@ def inline_markup(value: str) -> str:
     return "".join(out)
 
 
-def build_project_from_yaml(doc: dict[str, Any]) -> str:
+def build_project_from_yaml(
+    doc: dict[str, Any], next_slug: str = "", next_title: str = ""
+) -> str:
     title = html.escape(str(doc.get("title") or ""))
     artist = html.escape(str(doc.get("artist") or ""))
     parts = [
@@ -317,6 +337,15 @@ def build_project_from_yaml(doc: dict[str, Any]) -> str:
                 "</div>"
             )
         parts.append(f'<div class="project-credits">\n{"\n".join(rows)}\n</div>')
+
+    if next_slug:
+        parts.append(
+            '<div class="project-next">\n'
+            f'<a href="{html.escape(next_slug, quote=True)}.html">'
+            '<span class="project-next-label">Next project</span>'
+            f'<span class="project-next-title">{html.escape(next_title)}</span>'
+            "</a>\n</div>"
+        )
 
     parts.append(BACK_BOTTOM)
     return "\n".join(parts)
@@ -776,11 +805,43 @@ def render_shell(
 <body class="{html.escape(body_class, quote=True)}">
   <header class="site-header" aria-label="Site header">
     <a class="brand" href="menu.html">MAXIM KELLY</a>
-    <a class="nav-toggle" href="menu.html" aria-label="Menu">+</a>
+    <a class="nav-toggle" href="menu.html">MENU</a>
   </header>
   <main class="{html.escape(main_class, quote=True)}">
 {content}
   </main>
+</body>
+</html>
+"""
+
+
+def render_reel() -> str:
+    desc = html.escape(DEFAULT_DESCRIPTION, quote=True)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maxim Kelly — Director</title>
+  <meta name="description" content="{desc}">
+  <link rel="canonical" href="{SITE_URL}/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Maxim Kelly">
+  <meta property="og:title" content="Maxim Kelly — Director">
+  <meta property="og:description" content="{desc}">
+  <meta property="og:url" content="{SITE_URL}/">
+  <meta property="og:image" content="{SITE_URL}/assets/cargo/reel-poster.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="{STYLESHEET}">
+  <script type="application/ld+json">{person_jsonld()}</script>
+</head>
+<body class="reel-page">
+  <a class="reel" href="portfolio.html" aria-label="Enter portfolio">
+    <video class="reel-video" autoplay muted loop playsinline preload="metadata" poster="assets/cargo/reel-poster.jpg">
+      <source src="assets/cargo/reel.mp4" type="video/mp4">
+    </video>
+    <span class="reel-enter">Enter</span>
+  </a>
 </body>
 </html>
 """
@@ -937,7 +998,6 @@ def build_site() -> None:
 
     # Menu: explicitly clean and simple, not the broken extracted header-only page.
     menu_content = """    <div class="menu-wrap">
-      <div class="menu-kicker">Maxim Kelly \u2014 Director</div>
       <nav class="menu-list" aria-label="Main navigation">
         <a href="portfolio.html"><span>Films</span><span class="idx">01</span></a>
         <a href="selected-press.html"><span>Selected Press</span><span class="idx">02</span></a>
@@ -958,7 +1018,8 @@ def build_site() -> None:
     )
 
     # Index/home redirects to the menu.
-    write_file("index.html", render_redirect("menu.html", "Maxim Kelly | Director"))
+    # Index is the reel; the menu lives at menu.html.
+    write_file("index.html", render_reel())
     write_root_redirect("home.html", "menu.html")
     write_root_redirect("Home.html", "menu.html")
 
@@ -1050,10 +1111,18 @@ def build_site() -> None:
         )
 
     # Project pages.
+    order = [str(t.get("slug") or "") for t in (tiles or [])]
     for slug in project_slugs:
         doc = load_yaml(CONTENT / "projects" / f"{slug}.yml")
+        next_slug = next_title = ""
+        if order and slug in order:
+            candidate = order[(order.index(slug) + 1) % len(order)]
+            if candidate and candidate != slug:
+                next_slug = candidate
+                next_doc = load_yaml(CONTENT / "projects" / f"{candidate}.yml") or {}
+                next_title = str(next_doc.get("title") or candidate)
         if doc:
-            fragment = build_project_from_yaml(doc)
+            fragment = build_project_from_yaml(doc, next_slug, next_title)
         else:
             data = rendered_pages[slug]
             fragment = sanitize_fragment(
