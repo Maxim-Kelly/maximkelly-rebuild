@@ -143,6 +143,13 @@ img,video{display:block;max-width:100%;height:auto}
 STYLE_VERSION = hashlib.sha1(THEME_CSS.encode("utf-8")).hexdigest()[:8]
 STYLESHEET = f"assets/style.css?v={STYLE_VERSION}"
 
+DEFAULT_DESCRIPTION = (
+    "Maxim Kelly is a British Director and Photographer based in Barcelona. "
+    "Selected music videos and films."
+)
+SITE_URL = "https://maximkelly.com"
+INSTAGRAM = "https://www.instagram.com/maxim.kelly/"
+
 BACK_TOP = '<p class="project-back"><a href="portfolio.html">\u2190 Portfolio</a></p>'
 BACK_BOTTOM = (
     '<p class="project-back project-back--bottom">'
@@ -365,6 +372,9 @@ def build_info_from_yaml(
                     f'<h1><a href="mailto:{html.escape(email, quote=True)}">'
                     f"{html.escape(email)}</a></h1>"
                 )
+            if row.get("instagram"):
+                url = html.escape(str(row["instagram"]), quote=True)
+                right += f'<h1><a href="{url}" target="_blank">Instagram</a></h1>'
         else:
             left = f"<h1>{html.escape(str(row.get('outlet') or ''))}</h1>"
             inner = []
@@ -381,6 +391,63 @@ def build_info_from_yaml(
             '</div>\n<div class="rule"></div>'
         )
     return "\n".join(blocks)
+
+
+# --- Search / social metadata -------------------------------------------
+
+
+def describe_project(doc: dict[str, Any]) -> str:
+    title = str(doc.get("title") or "").strip()
+    artist = str(doc.get("artist") or "").strip()
+    lead = f"{title} ({artist}), directed by Maxim Kelly." if artist else f"{title}, directed by Maxim Kelly."
+    credits = doc.get("credits") or []
+    awards = []
+    for credit in credits[:3]:
+        label = str(credit.get("label") or "").strip()
+        value = str(credit.get("value") or "").strip()
+        piece = " ".join(part for part in (label, value) if part)
+        if piece:
+            awards.append(piece)
+    if awards:
+        lead += " Awards and nominations: " + "; ".join(awards) + "."
+    return lead
+
+
+def project_jsonld(doc: dict[str, Any], description: str) -> str:
+    payload: dict[str, Any] = {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": f"{doc.get('title', '')} — {doc.get('artist', '')}".strip(" —"),
+        "description": description,
+        "url": f"{SITE_URL}/{doc.get('slug', '')}.html",
+        "creator": person_jsonld_payload(),
+    }
+    credits = doc.get("credits") or []
+    awards = [" ".join(x for x in (c.get("label"), c.get("value")) if x).strip() for c in credits]
+    awards = [a for a in awards if a]
+    if awards:
+        payload["award"] = "; ".join(awards)
+    return json.dumps(payload, ensure_ascii=False)
+
+
+def person_jsonld_payload() -> dict[str, Any]:
+    return {
+        "@type": "Person",
+        "name": "Maxim Kelly",
+        "jobTitle": "Director",
+        "url": SITE_URL,
+        "sameAs": [INSTAGRAM],
+        "description": "Maxim Kelly is a British Director and Photographer based in Barcelona.",
+    }
+
+
+def person_jsonld() -> str:
+    payload = {
+        "@context": "https://schema.org",
+        **person_jsonld_payload(),
+        "knowsAbout": ["Music video direction", "Film direction", "Photography"],
+    }
+    return json.dumps(payload, ensure_ascii=False)
 
 
 def read_json(path: Path) -> Any:
@@ -669,16 +736,42 @@ def normalize_project_back_link(fragment: str) -> str:
     return fragment
 
 
-def render_shell(title: str, body_class: str, main_class: str, content: str) -> str:
+def render_shell(
+    title: str,
+    body_class: str,
+    main_class: str,
+    content: str,
+    *,
+    description: str = DEFAULT_DESCRIPTION,
+    canonical: str = "menu.html",
+    image: str = "",
+    jsonld: str = "",
+) -> str:
     title_escaped = html.escape(title, quote=False)
+    desc_escaped = html.escape(description, quote=True)
+    canon_escaped = html.escape(canonical, quote=True)
+    og_image = ""
+    if image:
+        absolute = image if image.startswith("http") else f"{SITE_URL}/{image.lstrip('/')}"
+        og_image = f'\n  <meta property="og:image" content="{html.escape(absolute, quote=True)}">'
+    jsonld_block = f'\n  <script type="application/ld+json">{jsonld}</script>' if jsonld else ""
     return f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title_escaped}</title>
-  <meta name="description" content="Maxim Kelly is a British Director and Photographer based in Barcelona.">
-  <link rel="stylesheet" href="{STYLESHEET}">
+  <meta name="description" content="{desc_escaped}">
+  <link rel="canonical" href="https://maximkelly.com/{canon_escaped}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Maxim Kelly">
+  <meta property="og:title" content="{title_escaped}">
+  <meta property="og:description" content="{desc_escaped}">
+  <meta property="og:url" content="https://maximkelly.com/{canon_escaped}">{og_image}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{title_escaped}">
+  <meta name="twitter:description" content="{desc_escaped}">
+  <link rel="stylesheet" href="{STYLESHEET}">{jsonld_block}
 </head>
 <body class="{html.escape(body_class, quote=True)}">
   <header class="site-header" aria-label="Site header">
@@ -854,7 +947,13 @@ def build_site() -> None:
     write_file(
         "menu.html",
         render_shell(
-            "Menu — Maxim Kelly | Director", "menu-page", "menu-main", menu_content
+            "Maxim Kelly — Director",
+            "menu-page",
+            "menu-main",
+            menu_content,
+            description="Maxim Kelly is a British Director and Photographer based in Barcelona. Music videos, films and photography.",
+            canonical="menu.html",
+            jsonld=person_jsonld(),
         ),
     )
 
@@ -877,6 +976,17 @@ def build_site() -> None:
                 rendered_pages.get("Portfolio", {}).get("content_html", "")
             )
         portfolio_content = rewrite_portfolio_gallery(portfolio_fragment, lookup)
+    tile_by_slug: dict[str, dict[str, Any]] = {}
+    if tiles:
+        for tile in tiles:
+            tile_by_slug[str(tile.get("slug") or "")] = tile
+    portfolio_description = (
+        "Selected films and music videos directed by Maxim Kelly, including "
+        + ", ".join(
+            f"{t.get('caption', '')}" for t in (tiles or [])[:4]
+        )
+        + "."
+    )
     write_file(
         "portfolio.html",
         render_shell(
@@ -884,6 +994,9 @@ def build_site() -> None:
             "portfolio-page",
             "portfolio-main",
             portfolio_content,
+            description=portfolio_description[:300],
+            canonical="portfolio.html",
+            image=(f"assets/cargo/{(tiles or [{}])[0].get('image', '')}" if tiles else ""),
         ),
     )
 
@@ -918,7 +1031,23 @@ def build_site() -> None:
             if out_name == "contact.html"
             else "press-page info-page"
         )
-        write_file(out_name, render_shell(page_title, body_class, "info-main", content))
+        info_desc = (
+            "Contact Maxim Kelly — director representation in the UK, Ireland, Spain, music videos and personal."
+            if kind == "contact"
+            else "Selected press, interviews and reviews of director Maxim Kelly."
+        )
+        write_file(
+            out_name,
+            render_shell(
+                page_title,
+                body_class,
+                "info-main",
+                content,
+                description=info_desc,
+                canonical=out_name,
+                jsonld=person_jsonld(),
+            ),
+        )
 
     # Project pages.
     for slug in project_slugs:
@@ -934,9 +1063,29 @@ def build_site() -> None:
         content = (
             f'    <article class="project-content">\n      {fragment}\n    </article>'
         )
-        title = f"{project_display_title(slug)} — Maxim Kelly | Director"
+        if doc and (doc.get("title") or doc.get("artist")):
+            head_title = str(doc.get("title") or "").strip()
+            head_artist = str(doc.get("artist") or "").strip()
+            label = f"{head_title} — {head_artist}" if head_artist else head_title
+        else:
+            label = project_display_title(slug)
+        title = f"{label} — Maxim Kelly | Director"
         write_file(
-            f"{slug}.html", render_shell(title, "project-page", "project-main", content)
+            f"{slug}.html",
+            render_shell(
+                title,
+                "project-page",
+                "project-main",
+                content,
+                description=describe_project(doc) if doc else DEFAULT_DESCRIPTION,
+                canonical=f"{slug}.html",
+                image=(
+                    f"assets/cargo/{tile_by_slug[slug].get('image', '')}"
+                    if slug in tile_by_slug and tile_by_slug[slug].get("image")
+                    else ""
+                ),
+                jsonld=project_jsonld(doc, describe_project(doc)) if doc else "",
+            ),
         )
 
     # Root-level aliases for old Cargo/title-case/lowercase routes.
@@ -984,6 +1133,46 @@ def build_site() -> None:
                 write_directory_redirect(variant, f"../{canonical}")
 
     write_404_redirect(project_slugs)
+
+    # --- Search and AI discovery files ---------------------------------
+    urls = [
+        f"{SITE_URL}/menu.html",
+        f"{SITE_URL}/portfolio.html",
+        f"{SITE_URL}/contact.html",
+        f"{SITE_URL}/selected-press.html",
+    ]
+    urls.extend(f"{SITE_URL}/{slug}.html" for slug in project_slugs)
+
+    sitemap = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    sitemap.extend(f"  <url><loc>{html.escape(url)}</loc></url>" for url in urls)
+    sitemap.append("</urlset>")
+    write_file("sitemap.xml", "\n".join(sitemap) + "\n")
+
+    write_file(
+        "robots.txt",
+        "User-agent: *\nAllow: /\n\n" f"Sitemap: {SITE_URL}/sitemap.xml\n",
+    )
+
+    llms = [
+        "# Maxim Kelly",
+        "",
+        "Maxim Kelly is a British Director and Photographer based in Barcelona.",
+        "He directs music videos, films and commercials, and works as a photographer.",
+        "",
+        "## Work",
+        "",
+    ]
+    for slug in project_slugs:
+        doc = load_yaml(CONTENT / "projects" / f"{slug}.yml") or {}
+        line = f"- {doc.get('title', slug)}"
+        if doc.get("artist"):
+            line += f" — {doc['artist']}"
+        llms.append(line)
+    llms += ["", "## Links", "", f"- Website: {SITE_URL}", f"- Instagram: {INSTAGRAM}", ""]
+    write_file("llms.txt", "\n".join(llms))
 
     print(f"built {len(project_slugs)} project pages")
     print("built menu.html, portfolio.html, contact.html, selected-press.html")
