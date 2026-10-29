@@ -315,13 +315,25 @@ def build_project_from_yaml(doc: dict[str, Any]) -> str:
     return "\n".join(parts)
 
 
+def resolve_cargo_asset(name: str) -> str:
+    """Point at the optimised variant when one exists (Foo.png may ship as Foo.jpg)."""
+    name = name.strip()
+    if not name:
+        return ""
+    stem = Path(name).stem
+    for candidate in (name, f"{stem}.jpg", f"{stem}.jpeg", f"{stem}.webp", f"{stem}.png"):
+        if (CARGO_ASSETS / candidate).exists():
+            return f"assets/cargo/{candidate}"
+    return f"assets/cargo/{name}"
+
+
 def build_portfolio_from_yaml(tiles: list[dict[str, Any]]) -> str:
     cells = []
     for tile in tiles:
         slug = html.escape(str(tile.get("slug") or ""), quote=True)
         caption = html.escape(str(tile.get("caption") or ""))
         image = str(tile.get("image") or "").strip()
-        src = html.escape(f"assets/cargo/{image}" if image else "", quote=True)
+        src = html.escape(resolve_cargo_asset(image), quote=True)
         width = tile.get("width")
         height = tile.get("height")
         size = f' width="{int(width)}" height="{int(height)}"' if width and height else ""
