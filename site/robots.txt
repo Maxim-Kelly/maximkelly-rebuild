@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /t/
 
 Sitemap: https://maximkelly.com/sitemap.xml

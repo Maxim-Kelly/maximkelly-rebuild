@@ -17,6 +17,8 @@ from typing import Any
 
 import yaml
 
+from treatments import TREATMENT_CSS, parse_front_matter, render_treatment
+
 ROOT = Path(__file__).resolve().parent
 RENDERED = ROOT / "rendered"
 FINAL_DATA = ROOT / "final-data"
@@ -994,7 +996,7 @@ def build_site() -> None:
     project_slugs.sort()
     lookup = build_lookup(project_slugs)
 
-    STYLE.write_text(THEME_CSS, encoding="utf-8")
+    STYLE.write_text(THEME_CSS + TREATMENT_CSS, encoding="utf-8")
 
     # Menu: explicitly clean and simple, not the broken extracted header-only page.
     menu_content = """    <div class="menu-wrap">
@@ -1203,6 +1205,30 @@ def build_site() -> None:
 
     write_404_redirect(project_slugs)
 
+    # Treatment pages: /t/<slug>/ — standalone, unlisted, no site chrome.
+    treatments_dir = CONTENT / "treatments"
+    treatment_slugs: list[str] = []
+    config = load_yaml(CONTENT / "config.yml") or {}
+    analytics_code = str(config.get("goatcounter") or "").strip()
+    if treatments_dir.exists():
+        for source in sorted(treatments_dir.glob("*.md")):
+            meta, body = parse_front_matter(source.read_text(encoding="utf-8"))
+            treatment_slugs.append(source.stem)
+            write_file(
+                Path("t") / source.stem / "index.html",
+                render_treatment(
+                    meta,
+                    body,
+                    site_root=SITE,
+                    stylesheet=f"../../{STYLESHEET}",
+                    slug=source.stem,
+                    site_url=SITE_URL,
+                    analytics_code=analytics_code,
+                ),
+            )
+    if treatment_slugs:
+        print(f"built {len(treatment_slugs)} treatment page(s)")
+
     # --- Search and AI discovery files ---------------------------------
     urls = [
         f"{SITE_URL}/menu.html",
@@ -1222,7 +1248,7 @@ def build_site() -> None:
 
     write_file(
         "robots.txt",
-        "User-agent: *\nAllow: /\n\n" f"Sitemap: {SITE_URL}/sitemap.xml\n",
+        "User-agent: *\nAllow: /\nDisallow: /t/\n\n" f"Sitemap: {SITE_URL}/sitemap.xml\n",
     )
 
     llms = [
@@ -1295,8 +1321,9 @@ def validate_images() -> list[tuple[str, str]]:
     missing: list[tuple[str, str]] = []
     for path in sorted(SITE.rglob("*.html")):
         text = path.read_text(encoding="utf-8", errors="ignore")
-        for src in re.findall(r'src="(assets/[^"]+)"', text):
-            if not (SITE / src).exists():
+        for src in re.findall(r'src="((?:\.\./)*assets/[^"]+)"', text):
+            resolved = (path.parent / src).resolve()
+            if not resolved.exists():
                 missing.append((str(path.relative_to(SITE)), src))
     return missing
 

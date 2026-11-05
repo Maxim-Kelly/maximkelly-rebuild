@@ -1,0 +1,6 @@
+# Site-wide config. Only treatment analytics live here for now.
+
+# GoatCounter code for anonymous, cookieless treatment analytics.
+# Sign up at goatcounter.com (free), then put your code below — e.g. "maximkelly".
+# Leave blank to disable the beacon entirely. See docs/treatments.md.
+goatcounter: "maximkelly"
