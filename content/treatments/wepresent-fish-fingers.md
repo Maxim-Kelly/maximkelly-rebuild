@@ -5,7 +5,7 @@ production: Friend
 director: Maxim Kelly
 date: November 2025
 version: Commission submission
-hero: assets/cargo/grade_ref_still_00019542.jpg
+hero: assets/treatments/wepresent-fish-fingers/hero.mp4
 ---
 
 An open commission submission. After twelve years of music videos, commercials

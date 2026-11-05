@@ -17,6 +17,9 @@ TREATMENT_CSS = r"""
 .treatment{width:100%}
 .t-hero{position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-end;padding:var(--pad);isolation:isolate}
 .t-hero-media{position:absolute;inset:0;z-index:-2;background-position:center;background-size:cover}
+.t-hero-video{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:contain;background:#000}
+.t-hero-video--cover{object-fit:cover}
+@media (orientation:portrait){.t-hero-video{object-fit:cover}}
 .t-hero-scrim{position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(20,20,18,.94) 0%,rgba(20,20,18,.16) 52%,rgba(20,20,18,.52) 100%)}
 .t-hero-inner{width:min(100%,960px)}
 .t-kicker{margin:0 0 20px;font-size:var(--text-caption);letter-spacing:.32em;text-transform:uppercase;color:var(--t-muted)}
@@ -73,6 +76,7 @@ TREATMENT_CSS = r"""
 @media (prefers-reduced-motion:reduce){.t-reveal{opacity:1!important;transform:none!important;transition:none!important}}
 @media (max-width:720px){
   .t-hero{padding:var(--pad) 16px}
+  .t-hero-video{object-fit:cover}
   .t-hero-inner{width:100%}
   .t-title{font-size:clamp(30px,9vw,52px)}
   .t-meta{margin-top:18px;line-height:1.7}
@@ -595,6 +599,31 @@ def render_treatment(
     client = str(meta.get("client") or "").strip()
     hero = str(meta.get("hero") or "").strip()
     hero_src = resolve_asset(site_root, hero) if hero else ""
+    hero_poster_src = ""
+    if meta.get("hero_poster"):
+        hero_poster_src = resolve_asset(site_root, str(meta["hero_poster"]))
+    elif hero and is_video(hero_src):
+        stem = Path(hero).with_suffix("").as_posix()
+        for ext in (".jpg", ".jpeg", ".png", ".webp"):
+            candidate = f"{stem}-poster{ext}"
+            if (site_root / candidate).exists():
+                hero_poster_src = ASSET_PREFIX + candidate
+                break
+    hero_fit = str(meta.get("hero_fit") or "contain").strip().lower()
+    hero_class = "t-hero-video t-hero-video--cover" if hero_fit == "cover" else "t-hero-video"
+
+    og_image_src = hero_poster_src or (hero_src if hero_src and not is_video(hero_src) else "")
+    og_image_url = ""
+    if og_image_src.startswith(ASSET_PREFIX):
+        og_image_url = f"{site_url}/{og_image_src[len(ASSET_PREFIX):]}"
+    elif og_image_src.startswith(("http://", "https://")):
+        og_image_url = og_image_src
+    og_block = ""
+    if og_image_url:
+        og_block = (
+            f'\n  <meta property="og:image" content="{html.escape(og_image_url, quote=True)}">'
+            f'\n  <meta name="twitter:image" content="{html.escape(og_image_url, quote=True)}">'
+        )
 
     meta_bits = []
     if meta.get("director"):
@@ -606,7 +635,19 @@ def render_treatment(
     meta_line = " · ".join(meta_bits)
 
     hero_markup = ""
-    if hero_src:
+    if hero_src and is_video(hero_src):
+        poster_attr = (
+            f' poster="{html.escape(hero_poster_src, quote=True)}"'
+            if hero_poster_src
+            else ""
+        )
+        hero_markup += (
+            f'<video class="{hero_class}" autoplay muted loop playsinline preload="metadata" '
+            f'aria-hidden="true"{poster_attr}>'
+            f'<source src="{html.escape(hero_src, quote=True)}" type="video/mp4">'
+            "</video>"
+        )
+    elif hero_src:
         hero_markup += (
             '<div class="t-hero-media" '
             f'style="background-image:url(\'{html.escape(hero_src, quote=True)}\')"></div>'
@@ -673,6 +714,13 @@ def render_treatment(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{html.escape(track, quote=False)} — Treatment</title>
   <meta name="description" content="{description}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{html.escape(track, quote=True)} — Treatment">
+  <meta property="og:description" content="{description}">
+  <meta property="og:url" content="{html.escape(site_url, quote=True)}/t/{html.escape(slug, quote=True)}/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{html.escape(track, quote=True)} — Treatment">
+  <meta name="twitter:description" content="{description}">{og_block}
   <meta name="robots" content="noindex, nofollow">
   <link rel="canonical" href="{html.escape(site_url, quote=True)}/t/{html.escape(slug, quote=True)}/">
   <link rel="stylesheet" href="{stylesheet}">

@@ -120,6 +120,28 @@ def gif_to_mp4(path: Path) -> str | None:
     return f"{path.name} -> {out_path.name} ({out_path.stat().st_size // 1024}KB)"
 
 
+def video_poster(path: Path) -> str | None:
+    """Extract a first-frame poster for every video so heroes have a fallback."""
+    if path.suffix.lower() not in {".mp4", ".webm", ".mov"}:
+        return None
+    if not shutil.which("ffmpeg"):
+        return None
+    out = path.with_name(path.stem + "-poster.jpg")
+    if out.exists():
+        return None
+    result = subprocess.run(
+        [
+            "ffmpeg", "-y", "-loglevel", "error",
+            "-i", str(path), "-frames:v", "1", "-q:v", "3", str(out),
+        ],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return f"poster failed for {path.name}"
+    return f"{path.name} -> {out.name} ({out.stat().st_size // 1024}KB)"
+
+
 def main() -> int:
     touched = 0
     for path in image_paths():
@@ -129,7 +151,7 @@ def main() -> int:
             if path.suffix.lower() == ".gif":
                 message = gif_to_mp4(path)
             else:
-                message = optimize_still(path)
+                message = optimize_still(path) or video_poster(path)
         except Exception as exc:  # keep going on a single bad file
             message = f"ERROR {path.name}: {exc}"
         if message:
