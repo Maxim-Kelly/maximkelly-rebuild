@@ -101,14 +101,37 @@ TREATMENT_JS = r"""
     }
   };
 
+  /* ---- push alert to you on the high-signal events ---- */
+  var ALERT_ENDPOINT = '__ALERT_URL__';
+  var ALERT_MODE = '__ALERT_MODE__';
+  function alertNow(name, detail){
+    if (!ALERT_ENDPOINT) return;
+    var payload = {
+      _subject: 'Treatment: ' + name + ' — ' + location.pathname,
+      event: name,
+      detail: detail || '',
+      page: location.pathname,
+      time: new Date().toISOString()
+    };
+    try {
+      if (ALERT_MODE === 'json') {
+        fetch(ALERT_ENDPOINT, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(function(){});
+      } else {
+        var body = Object.keys(payload).map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]); }).join('&');
+        fetch(ALERT_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body }).catch(function(){});
+      }
+    } catch (e) {}
+  }
+
   /* ---- engagement signals ---- */
   var key = 't-seen:' + location.pathname;
   var seen = false;
   try { seen = !!window.localStorage.getItem(key); window.localStorage.setItem(key, String(Date.now())); } catch (e) {}
   track(seen ? 'treatment_revisit' : 'treatment_open');
+  if (seen) alertNow('treatment_revisit', 'came back for another look');
 
   var printed = false;
-  function notePrint(){ if (!printed) { printed = true; track('treatment_print'); } }
+  function notePrint(){ if (!printed) { printed = true; track('treatment_print'); alertNow('treatment_print', 'printed / PDF'); } }
   window.addEventListener('beforeprint', notePrint);
   if (window.matchMedia) {
     try {
@@ -124,7 +147,11 @@ TREATMENT_JS = r"""
     var pct = max > 0 ? Math.round((window.pageYOffset / max) * 100) : 100;
     for (var i = 0; i < marks.length; i++) {
       var m = marks[i];
-      if (pct >= m && !reached[m]) { reached[m] = true; track('scroll_depth_' + m); }
+      if (pct >= m && !reached[m]) {
+        reached[m] = true;
+        track('scroll_depth_' + m);
+        if (m === 100) alertNow('scroll_depth_100', 'read the whole thing');
+      }
     }
   }
 
@@ -447,6 +474,8 @@ def render_treatment(
     slug: str,
     site_url: str,
     analytics_code: str = "",
+    alert_endpoint: str = "",
+    alert_mode: str = "form",
 ) -> str:
     track = str(meta.get("track") or slug).strip()
     client = str(meta.get("client") or "").strip()
@@ -513,6 +542,10 @@ def render_treatment(
             '.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>'
         )
 
+    treatment_js = TREATMENT_JS.replace(
+        "__ALERT_URL__", alert_endpoint.replace("\\", "\\\\").replace("'", "\\'")
+    ).replace("__ALERT_MODE__", alert_mode)
+
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -533,7 +566,7 @@ def render_treatment(
   </div>
 {credits_markup}
 </article>
-<script>{TREATMENT_JS}</script>
+<script>{treatment_js}</script>
 </body>
 </html>
 """

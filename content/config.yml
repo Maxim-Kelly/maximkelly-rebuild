@@ -1,6 +1,21 @@
-# Site-wide config. Only treatment analytics live here for now.
+# Site-wide config.
 
 # GoatCounter code for anonymous, cookieless treatment analytics.
-# Sign up at goatcounter.com (free), then put your code below — e.g. "maximkelly".
-# Leave blank to disable the beacon entirely. See docs/treatments.md.
+# Sign up at goatcounter.com (free) if you need a different code.
 goatcounter: "maximkelly"
+
+# Push alerts on the high-signal events only:
+#   treatment_print     someone printed / PDF'd it
+#   treatment_revisit   they came back for another look
+#   scroll_depth_100    they read the whole thing
+#
+# Option A — email. Free, no account. Formsubmit sends you a one-time
+# confirmation mail; click it once and alerts work from then on.
+# Change the address to wherever you want them.
+#
+# Option B — webhook to your phone (Discord / Slack / Telegram bridge).
+# More instant. Takes priority if set. Paste the webhook URL and it
+# switches to JSON mode automatically.
+alerts:
+  email: maxim@maximkelly.com
+  webhook: ""

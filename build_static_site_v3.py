@@ -1210,6 +1210,16 @@ def build_site() -> None:
     treatment_slugs: list[str] = []
     config = load_yaml(CONTENT / "config.yml") or {}
     analytics_code = str(config.get("goatcounter") or "").strip()
+    alerts = config.get("alerts") or {}
+    if alerts.get("webhook"):
+        alert_endpoint = str(alerts["webhook"]).strip()
+        alert_mode = "json"
+    elif alerts.get("email"):
+        alert_endpoint = "https://formsubmit.co/" + str(alerts["email"]).strip()
+        alert_mode = "form"
+    else:
+        alert_endpoint = ""
+        alert_mode = "form"
     if treatments_dir.exists():
         for source in sorted(treatments_dir.glob("*.md")):
             meta, body = parse_front_matter(source.read_text(encoding="utf-8"))
@@ -1224,6 +1234,8 @@ def build_site() -> None:
                     slug=source.stem,
                     site_url=SITE_URL,
                     analytics_code=analytics_code,
+                    alert_endpoint=alert_endpoint,
+                    alert_mode=alert_mode,
                 ),
             )
     if treatment_slugs:
