@@ -1,61 +1,143 @@
 #!/usr/bin/env python3
-"""Optimize the downloaded portfolio stills so the site loads quickly.
+"""Optimize stills and GIFs used across the site.
 
-Large Cargo PNG exports (10-12MB each) are converted to JPEG at a sane
-display size. Filenames keep their base name but get a .jpg extension, so
-build_static_site_v3.py falls back across extensions when it resolves
-`assets/cargo/...` references.
+- Photos are downscaled and re-encoded to JPEG.
+- Screenshots keep their format so small type stays sharp.
+- Animated GIFs become silent looping MP4s (roughly 10x smaller, better quality).
+
+Scans site/assets/cargo and site/assets/treatments recursively. Safe to re-run:
+anything already small is left alone.
 """
 
 from __future__ import annotations
 
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
 from PIL import Image
 
-CARGO = Path(__file__).resolve().parent / "site" / "assets" / "cargo"
-MAX_EDGE = 1600
+ROOT = Path(__file__).resolve().parent
+SITE = ROOT / "site"
+SCAN_DIRS = [SITE / "assets" / "cargo", SITE / "assets" / "treatments"]
+
+MAX_EDGE = 2000
+GIF_MAX_EDGE = 1280
 JPEG_QUALITY = 82
-MIN_BYTES_TO_TOUCH = 400_000  # skip anything already small enough
+MIN_BYTES_TO_TOUCH = 400_000
+# A PNG this large is almost certainly a photo, not a screenshot.
+PNG_PHOTO_THRESHOLD = 1_000_000
 
 
-def optimize(path: Path) -> Path | None:
-    if path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".webp"}:
+def image_paths() -> list[Path]:
+    found: list[Path] = []
+    for base in SCAN_DIRS:
+        if base.exists():
+            found.extend(p for p in sorted(base.rglob("*")) if p.is_file())
+    return found
+
+
+def resample(size: tuple[int, int]) -> tuple[int, int]:
+    width, height = size
+    if max(width, height) <= MAX_EDGE:
+        return size
+    if width >= height:
+        return MAX_EDGE, max(1, round(height * MAX_EDGE / width))
+    return max(1, round(width * MAX_EDGE / height)), MAX_EDGE
+
+
+def optimize_still(path: Path) -> str | None:
+    suffix = path.suffix.lower()
+    if suffix not in {".png", ".jpg", ".jpeg", ".webp"}:
         return None
-    if path.stat().st_size < MIN_BYTES_TO_TOUCH:
+
+    with Image.open(path) as img:
+        size = img.size
+        is_animated = bool(getattr(img, "is_animated", False))
+    if is_animated:
         return None
 
-    out_path = path.with_suffix(".jpg")
-    if out_path == path:
-        out_path = path  # recompress in place
+    oversized = max(size) > MAX_EDGE
+    big_file = path.stat().st_size >= MIN_BYTES_TO_TOUCH
+    if not oversized and not big_file:
+        return None
+
+    out_path = path
+    if suffix == ".png":
+        if path.stat().st_size > PNG_PHOTO_THRESHOLD:
+            out_path = path.with_suffix(".jpg")
+        else:
+            out_path = path
+    else:
+        out_path = path.with_suffix(".jpg")
 
     with Image.open(path) as img:
         img = img.convert("RGB")
         img.thumbnail((MAX_EDGE, MAX_EDGE), Image.LANCZOS)
-        img.save(out_path, "JPEG", quality=JPEG_QUALITY, optimize=True, progressive=True)
+        if out_path.suffix.lower() == ".png":
+            img.save(out_path, "PNG", optimize=True)
+        else:
+            img.save(out_path, "JPEG", quality=JPEG_QUALITY, optimize=True, progressive=True)
 
     if out_path != path and path.exists():
         path.unlink()
+    return f"{path.name} -> {out_path.name} ({out_path.stat().st_size // 1024}KB)"
 
-    return out_path
+
+def gif_to_mp4(path: Path) -> str | None:
+    if path.suffix.lower() != ".gif":
+        return None
+    if not shutil.which("ffmpeg"):
+        return "ffmpeg not found - skipped"
+
+    with Image.open(path) as img:
+        width, height = img.size
+        animated = bool(getattr(img, "is_animated", False))
+    if not animated:
+        return optimize_still(path.with_suffix(".png")) or None
+
+    if width > GIF_MAX_EDGE:
+        target_w = GIF_MAX_EDGE
+        target_h = max(2, round(height * GIF_MAX_EDGE / width / 2) * 2)
+    else:
+        target_w = width if width % 2 == 0 else width - 1
+        target_h = height if height % 2 == 0 else height - 1
+
+    out_path = path.with_suffix(".mp4")
+    cmd = [
+        "ffmpeg", "-y", "-loglevel", "error",
+        "-i", str(path),
+        "-vf", f"scale={target_w}:{target_h}",
+        "-c:v", "libx264", "-crf", "24", "-preset", "slow",
+        "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-an",
+        str(out_path),
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        return f"ffmpeg failed on {path.name}: {result.stderr.strip()[:200]}"
+    path.unlink()
+    return f"{path.name} -> {out_path.name} ({out_path.stat().st_size // 1024}KB)"
 
 
 def main() -> int:
-    if not CARGO.exists():
-        print(f"missing {CARGO}", file=sys.stderr)
-        return 1
-
     touched = 0
-    for path in sorted(CARGO.iterdir()):
-        result = optimize(path)
-        if result is not None:
-            size_kb = result.stat().st_size // 1024
-            print(f"optimized {path.name} -> {result.name} ({size_kb}KB)")
+    for path in image_paths():
+        if path.name.startswith("."):
+            continue
+        try:
+            if path.suffix.lower() == ".gif":
+                message = gif_to_mp4(path)
+            else:
+                message = optimize_still(path)
+        except Exception as exc:  # keep going on a single bad file
+            message = f"ERROR {path.name}: {exc}"
+        if message:
+            print(message)
             touched += 1
 
-    total = sum(p.stat().st_size for p in CARGO.iterdir() if p.is_file())
-    print(f"{touched} file(s) optimized, cargo assets now {total // (1024 * 1024)}MB")
+    total = sum(p.stat().st_size for base in SCAN_DIRS if base.exists() for p in base.rglob("*") if p.is_file())
+    print(f"{touched} file(s) touched, optimized assets now {total // (1024 * 1024)}MB")
     return 0
 
 
