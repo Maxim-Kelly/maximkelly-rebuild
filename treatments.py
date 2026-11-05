@@ -17,7 +17,7 @@ TREATMENT_CSS = r"""
 .treatment{width:100%}
 .t-hero{position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-end;padding:var(--pad);isolation:isolate}
 .t-hero-media{position:absolute;inset:0;z-index:-2;background-position:center;background-size:cover}
-.t-hero-video{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:contain;background:#000}
+.t-hero-video{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;background:#000}
 .t-hero-video--cover{object-fit:cover}
 @media (orientation:portrait){.t-hero-video{object-fit:cover}}
 .t-hero-scrim{position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(20,20,18,.94) 0%,rgba(20,20,18,.16) 52%,rgba(20,20,18,.52) 100%)}
