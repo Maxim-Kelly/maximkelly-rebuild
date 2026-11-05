@@ -49,6 +49,18 @@ TREATMENT_CSS = r"""
 .t-split>*{min-width:0}
 .t-split .t-block{width:auto;margin:0}
 .t-split .t-fig{margin:0}
+.t-work{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,3.5vw,48px);width:var(--t-wide);margin:clamp(38px,6vw,72px) auto}
+.t-work-item{display:block;text-decoration:none}
+.t-work-item .t-fig{margin:0}
+.t-work-item img{transition:transform .6s cubic-bezier(.2,.7,.2,1),opacity .3s ease}
+.t-work-item:hover img{transform:scale(1.03);opacity:.9}
+.t-work-title{margin:14px 0 0;font-size:clamp(15px,1.4vw,19px);letter-spacing:-.015em;color:var(--t-fg)}
+.t-work-artist{margin:4px 0 0;font-size:clamp(11px,.95vw,13px);letter-spacing:.16em;text-transform:uppercase;color:var(--t-dim)}
+.t-awards{display:grid;grid-template-columns:auto 1fr;gap:14px clamp(18px,3vw,36px);margin:0;font-size:clamp(15px,1.3vw,19px)}
+.t-awards dt{margin:0;letter-spacing:.12em;color:var(--t-dim);font-variant-numeric:tabular-nums}
+.t-awards dd{margin:0}
+.t-award-org{display:block;letter-spacing:-.01em;color:var(--t-fg)}
+.t-award-detail{display:block;margin-top:4px;font-size:clamp(11px,.95vw,13px);letter-spacing:.14em;text-transform:uppercase;color:var(--t-dim)}
 .t-break{width:100%;margin:clamp(56px,9vw,112px) 0;border:0;border-top:1px solid var(--t-rule)}
 .t-credits{width:var(--t-wide);margin:0 auto;padding:clamp(48px,8vw,96px) 0 clamp(64px,10vw,120px);border-top:1px solid var(--t-rule);display:flex;justify-content:flex-end}
 .t-credits-inner{width:min(460px,100%)}
@@ -67,6 +79,9 @@ TREATMENT_CSS = r"""
   .t-p,.t-list{font-size:clamp(17px,4.6vw,20px);line-height:1.6}
   .t-quote{font-size:clamp(20px,5.4vw,28px)}
   .t-cols-2{column-count:1}
+  .t-work{grid-template-columns:1fr;width:calc(100% - 2 * var(--pad))}
+  .t-awards{grid-template-columns:1fr;gap:2px}
+  .t-awards dd{margin-bottom:18px}
   .t-split{grid-template-columns:1fr;gap:clamp(22px,5vw,36px);width:calc(100% - 2 * var(--pad))}
   .t-credits{padding-inline:var(--pad);justify-content:flex-start}
   .t-credits-inner{width:100%}
@@ -241,6 +256,8 @@ CAPTION_LINE = re.compile(r"^\*([^*].*?)\*\s*$")
 HEADING_LINE = re.compile(r"^(#{2,3})\s+(.*)$")
 DIRECTIVE_LINE = re.compile(r"^\{\{\s*(wide|full|columns:\s*\d+)\s*\}\}\s*$", re.I)
 SPLIT_OPEN = re.compile(r"^\{\{\s*split\s*$", re.I)
+WORK_OPEN = re.compile(r"^\{\{\s*work\s*$", re.I)
+AWARDS_OPEN = re.compile(r"^\{\{\s*awards\s*$", re.I)
 SPLIT_SIDE = re.compile(r"^\s*(left|right)\s*:\s*$", re.I)
 LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
@@ -309,7 +326,52 @@ def wrap(kind: str, inner: str, *, reveal: bool = True, extra: str = "") -> str:
     return f'<div class="{classes}">{inner}</div>'
 
 
+def render_work(site_root: Path, items: list[dict[str, str]]) -> str:
+    cells: list[str] = []
+    for item in items:
+        src = resolve_asset(site_root, item.get("image", ""))
+        title = md_inline(item.get("title", ""))
+        artist = md_inline(item.get("artist", ""))
+        url = item.get("url", "").strip()
+        inner = (
+            '<figure class="t-fig">'
+            f'<img src="{html.escape(src, quote=True)}" '
+            f'alt="{html.escape(_md_plain(item.get("title", "")), quote=True)}" loading="lazy">'
+            "</figure>"
+        )
+        inner += f'<p class="t-work-title">{title}</p>'
+        if artist:
+            inner += f'<p class="t-work-artist">{artist}</p>'
+        if url:
+            cells.append(
+                f'<a class="t-work-item t-reveal" href="{html.escape(url, quote=True)}" '
+                f'target="_blank" rel="noopener">{inner}</a>'
+            )
+        else:
+            cells.append(f'<div class="t-work-item t-reveal">{inner}</div>')
+    return f'<div class="t-work">{"".join(cells)}</div>'
+
+
+def render_awards(rows: list[list[str]]) -> str:
+    body: list[str] = []
+    for row in rows:
+        year = row[0] if len(row) > 0 else ""
+        org = row[1] if len(row) > 1 else ""
+        detail = row[2] if len(row) > 2 else ""
+        body.append(
+            f"<dt>{md_inline(year)}</dt><dd>"
+            f'<span class="t-award-org">{md_inline(org)}</span>'
+            + (f'<span class="t-award-detail">{md_inline(detail)}</span>' if detail else "")
+            + "</dd>"
+        )
+    return (
+        '<div class="t-block t-block--col t-reveal">'
+        f'<dl class="t-awards">{"".join(body)}</dl></div>'
+    )
+
+
 def render_blocks(site_root: Path, body: str) -> str:
+    body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
     lines = body.splitlines()
     out: list[str] = []
     section_open = False
@@ -368,6 +430,45 @@ def render_blocks(site_root: Path, body: str) -> str:
             left_html = render_blocks(site_root, "\n".join(left))
             right_html = render_blocks(site_root, "\n".join(right))
             out.append(f'<div class="t-split">{left_html}{right_html}</div>')
+            continue
+
+        if WORK_OPEN.match(stripped):
+            close_section()
+            i += 1
+            items: list[dict[str, str]] = []
+            current: dict[str, str] = {}
+            while i < total:
+                line = lines[i].strip()
+                if line == "}}":
+                    i += 1
+                    break
+                if not line:
+                    if current:
+                        items.append(current)
+                        current = {}
+                else:
+                    pair = re.match(r"^([A-Za-z_]+)\s*:\s*(.+)$", line)
+                    if pair:
+                        current[pair.group(1).lower()] = pair.group(2).strip()
+                i += 1
+            if current:
+                items.append(current)
+            out.append(render_work(site_root, items))
+            continue
+
+        if AWARDS_OPEN.match(stripped):
+            close_section()
+            i += 1
+            award_rows: list[list[str]] = []
+            while i < total:
+                line = lines[i].strip()
+                if line == "}}":
+                    i += 1
+                    break
+                if line:
+                    award_rows.append([part.strip() for part in line.split("|", 2)])
+                i += 1
+            out.append(render_awards(award_rows))
             continue
 
         if stripped == "---":
@@ -463,6 +564,8 @@ def render_blocks(site_root: Path, body: str) -> str:
                 or HEADING_LINE.match(nxt)
                 or DIRECTIVE_LINE.match(nxt)
                 or SPLIT_OPEN.match(nxt)
+                or WORK_OPEN.match(nxt)
+                or AWARDS_OPEN.match(nxt)
                 or nxt == "---"
             ):
                 break
