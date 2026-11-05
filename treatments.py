@@ -104,21 +104,32 @@ TREATMENT_JS = r"""
   /* ---- push alert to you on the high-signal events ---- */
   var ALERT_ENDPOINT = '__ALERT_URL__';
   var ALERT_MODE = '__ALERT_MODE__';
-  function alertNow(name, detail){
+  var ALERT_CHAT = '__ALERT_CHAT__';
+  var ALERT_TITLE = '__ALERT_TITLE__';
+  function alertNow(){
     if (!ALERT_ENDPOINT) return;
-    var payload = {
-      _subject: 'Treatment: ' + name + ' — ' + location.pathname,
-      event: name,
-      detail: detail || '',
-      page: location.pathname,
-      time: new Date().toISOString()
-    };
     try {
-      if (ALERT_MODE === 'json') {
-        fetch(ALERT_ENDPOINT, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(function(){});
+      if (ALERT_MODE === 'telegram') {
+        fetch(ALERT_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: ALERT_CHAT, text: 'Treatment opened — ' + ALERT_TITLE + '\n' + window.location.href })
+        }).catch(function(){});
+      } else if (ALERT_MODE === 'json') {
+        fetch(ALERT_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ treatment: ALERT_TITLE, url: window.location.href, time: new Date().toISOString() })
+        }).catch(function(){});
       } else {
-        var body = Object.keys(payload).map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(payload[k]); }).join('&');
-        fetch(ALERT_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body }).catch(function(){});
+        var body = '_subject=' + encodeURIComponent('Treatment opened: ' + ALERT_TITLE)
+          + '&event=treatment_open&page=' + encodeURIComponent(window.location.href);
+        fetch(ALERT_ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body
+        }).catch(function(){});
       }
     } catch (e) {}
   }
@@ -128,10 +139,10 @@ TREATMENT_JS = r"""
   var seen = false;
   try { seen = !!window.localStorage.getItem(key); window.localStorage.setItem(key, String(Date.now())); } catch (e) {}
   track(seen ? 'treatment_revisit' : 'treatment_open');
-  if (seen) alertNow('treatment_revisit', 'came back for another look');
+  alertNow();
 
   var printed = false;
-  function notePrint(){ if (!printed) { printed = true; track('treatment_print'); alertNow('treatment_print', 'printed / PDF'); } }
+  function notePrint(){ if (!printed) { printed = true; track('treatment_print'); } }
   window.addEventListener('beforeprint', notePrint);
   if (window.matchMedia) {
     try {
@@ -150,7 +161,6 @@ TREATMENT_JS = r"""
       if (pct >= m && !reached[m]) {
         reached[m] = true;
         track('scroll_depth_' + m);
-        if (m === 100) alertNow('scroll_depth_100', 'read the whole thing');
       }
     }
   }
@@ -476,6 +486,7 @@ def render_treatment(
     analytics_code: str = "",
     alert_endpoint: str = "",
     alert_mode: str = "form",
+    alert_chat: str = "",
 ) -> str:
     track = str(meta.get("track") or slug).strip()
     client = str(meta.get("client") or "").strip()
@@ -542,9 +553,15 @@ def render_treatment(
             '.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>'
         )
 
-    treatment_js = TREATMENT_JS.replace(
-        "__ALERT_URL__", alert_endpoint.replace("\\", "\\\\").replace("'", "\\'")
-    ).replace("__ALERT_MODE__", alert_mode)
+    def js_safe(value: str) -> str:
+        return value.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
+
+    treatment_js = (
+        TREATMENT_JS.replace("__ALERT_URL__", js_safe(alert_endpoint))
+        .replace("__ALERT_MODE__", js_safe(alert_mode))
+        .replace("__ALERT_CHAT__", js_safe(alert_chat))
+        .replace("__ALERT_TITLE__", js_safe(track))
+    )
 
     return f"""<!doctype html>
 <html lang="en">

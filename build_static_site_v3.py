@@ -1211,7 +1211,16 @@ def build_site() -> None:
     config = load_yaml(CONTENT / "config.yml") or {}
     analytics_code = str(config.get("goatcounter") or "").strip()
     alerts = config.get("alerts") or {}
-    if alerts.get("webhook"):
+    alert_chat = ""
+    if alerts.get("telegram_token") and alerts.get("telegram_chat_id"):
+        alert_endpoint = (
+            "https://api.telegram.org/bot"
+            + str(alerts["telegram_token"]).strip()
+            + "/sendMessage"
+        )
+        alert_mode = "telegram"
+        alert_chat = str(alerts["telegram_chat_id"]).strip()
+    elif alerts.get("webhook"):
         alert_endpoint = str(alerts["webhook"]).strip()
         alert_mode = "json"
     elif alerts.get("email"):
@@ -1236,6 +1245,7 @@ def build_site() -> None:
                     analytics_code=analytics_code,
                     alert_endpoint=alert_endpoint,
                     alert_mode=alert_mode,
+                    alert_chat=alert_chat,
                 ),
             )
     if treatment_slugs:
