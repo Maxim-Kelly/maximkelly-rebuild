@@ -28,7 +28,7 @@
   <div class="t-body">
 <div class="t-block t-block--col t-reveal t-lede"><p class="t-p">Keisha, Mutya and Siobhán in a movie palace at midnight, dressed for a premiere against faded velvet. The song moves between them, each taking a turn to perform from a different part of the room. Then VFX shifts the room into an uncanny dreamscape.</p></div>
 <div class="t-pause"></div>
-<div class="t-block t-block--wide t-reveal"><figure class="t-fig"><img src="../../assets/treatments/sugababes-love-language/Sugababes_Image_to_Image_045.png" alt="Previsualisation only. The band are shot for real." loading="lazy" decoding="async" width="1088" height="608"><figcaption>Previsualisation only. The band are shot for real.</figcaption></figure></div>
+<div class="t-block t-block--wide t-reveal"><figure class="t-fig"><img src="../../assets/treatments/sugababes-love-language/Sugababes_Image_to_Image.jpg" alt="Previsualisation only. The band are shot for real." loading="lazy" decoding="async" width="1088" height="608"><figcaption>Previsualisation only. The band are shot for real.</figcaption></figure></div>
 <section class="t-section" data-section="The idea">
 <h2 class="t-section-title">The idea</h2>
 <div class="t-block t-block--col t-reveal"><p class="t-p">Cinema is a projected dream. The lights go down, the room leaves the waking world behind, and this film runs on the same logic.</p></div>
@@ -88,9 +88,9 @@
 <section class="t-section" data-section="STYLING AND GLAMOUR">
 <h2 class="t-section-title">STYLING AND GLAMOUR</h2>
 <div class="t-block t-block--col t-reveal"><p class="t-p">If this gets picked up on the back of another shoot, the styling may already be set and out of our hands. That is fine.</p></div>
-<div class="t-tiny"></div>
+<div class="t-pause"></div>
 <div class="t-block t-block--col t-reveal"><blockquote class="t-quote">The Sugababes are glamorous, and this world is already built for them.</blockquote></div>
-<div class="t-tiny"></div>
+<div class="t-pause"></div>
 <div class="t-block t-block--col t-reveal"><p class="t-p">Where I do control it, the language is the Hollywood portrait: gown, satin, silk, fur, sequins against faded velvet.</p></div>
 <div class="t-tiny"></div>
 <div class="t-block t-block--col t-reveal"><p class="t-p">We also build one extra setup for them: a vintage Hollywood portrait, in the style of the old studio glamour photographs. It is made from assets collected on the shoot to assist with the VFX, so it costs nothing on the day.</p></div>
@@ -209,22 +209,35 @@
   /* ---- cinema curtain: lift once the page is genuinely ready ---- */
   (function(){
     var curtain = document.querySelector('.t-curtain');
-    var seen = false;
-    try { seen = sessionStorage.getItem('t-curtain') === '1'; } catch (e) {}
     var lifted = false;
     function lift(){
       if (lifted) return;
       lifted = true;
-      try { sessionStorage.setItem('t-curtain', '1'); } catch (e) {}
       document.body.classList.remove('is-loading');
       if (curtain) curtain.classList.add('is-up');
     }
-    if (reduce) { lift(); return; }
-    var ready = false;
-    function maybe(){ if (ready) setTimeout(lift, seen ? 0 : 900); }
-    if (document.readyState === 'complete') { ready = true; maybe(); }
-    else window.addEventListener('load', function(){ ready = true; maybe(); });
-    setTimeout(lift, 5000); /* hard cap: never hold the page longer than five seconds */
+    setTimeout(lift, 5000); /* hard cap first: nothing can ever trap the page on black */
+    var winReady = document.readyState === 'complete';
+    var heroReady = false;
+    function maybe(){ if (winReady && heroReady) setTimeout(lift, 700); }
+    if (!winReady) window.addEventListener('load', function(){ winReady = true; maybe(); });
+    var v = document.querySelector('.t-hero video');
+    var bgEl = document.querySelector('.t-hero-media');
+    if (v) {
+      if (v.readyState >= 3) { heroReady = true; }
+      else {
+        v.addEventListener('canplay', function(){ heroReady = true; maybe(); });
+        v.addEventListener('error', function(){ heroReady = true; maybe(); });
+      }
+    } else if (bgEl) {
+      var m = /url\(['"]?([^'")]+)/.exec(bgEl.getAttribute('style') || '');
+      if (m) {
+        var probe = new Image();
+        probe.onload = probe.onerror = function(){ heroReady = true; maybe(); };
+        probe.src = m[1];
+      } else { heroReady = true; }
+    } else { heroReady = true; }
+    maybe();
   })();
 
   if ('IntersectionObserver' in window) {

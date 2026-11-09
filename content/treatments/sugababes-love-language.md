@@ -14,7 +14,7 @@ Keisha, Mutya and Siobhán in a movie palace at midnight, dressed for a premiere
 
 ***
 
-![](wide: assets/treatments/sugababes-love-language/Sugababes_Image_to_Image_045.png)
+![](wide: assets/treatments/sugababes-love-language/Sugababes_Image_to_Image.jpg)
 *Previsualisation only. The band are shot for real.*
 
 ## The idea
@@ -153,11 +153,11 @@ Shot digital, finished like 35mm: grain, halation, the print slipping in the gat
 
 If this gets picked up on the back of another shoot, the styling may already be set and out of our hands. That is fine.
 
-~~
+***
 
 > The Sugababes are glamorous, and this world is already built for them. 
 
-~~
+***
 
 Where I do control it, the language is the Hollywood portrait: gown, satin, silk, fur, sequins against faded velvet.
 

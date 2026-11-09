@@ -81,7 +81,7 @@ TREATMENT_CSS = r"""
 .t-version{margin:34px 0 0;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--t-dim)}
 .t-reveal{opacity:0;transform:translateY(22px);transition:opacity .95s cubic-bezier(.22,.61,.36,1),transform .95s cubic-bezier(.22,.61,.36,1)}
 .t-reveal.is-in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.t-reveal{opacity:1!important;transform:none!important;transition:none!important}.t-curtain{display:none!important}.is-loading .treatment{opacity:1!important}}
+@media (prefers-reduced-motion:reduce){.t-reveal{opacity:1!important;transform:none!important;transition:none!important}.treatment{transition:none!important}.t-curtain{transition:none!important}.t-curtain::after{animation:none!important}}
 .treatment{transition:opacity 1s ease}
 .is-loading .treatment{opacity:0}
 .t-curtain{position:fixed;inset:0;z-index:60;background:var(--t-bg);display:flex;align-items:center;justify-content:center;transition:opacity .9s ease,visibility .9s}
@@ -232,22 +232,35 @@ TREATMENT_JS = r"""
   /* ---- cinema curtain: lift once the page is genuinely ready ---- */
   (function(){
     var curtain = document.querySelector('.t-curtain');
-    var seen = false;
-    try { seen = sessionStorage.getItem('t-curtain') === '1'; } catch (e) {}
     var lifted = false;
     function lift(){
       if (lifted) return;
       lifted = true;
-      try { sessionStorage.setItem('t-curtain', '1'); } catch (e) {}
       document.body.classList.remove('is-loading');
       if (curtain) curtain.classList.add('is-up');
     }
-    if (reduce) { lift(); return; }
-    var ready = false;
-    function maybe(){ if (ready) setTimeout(lift, seen ? 0 : 900); }
-    if (document.readyState === 'complete') { ready = true; maybe(); }
-    else window.addEventListener('load', function(){ ready = true; maybe(); });
-    setTimeout(lift, 5000); /* hard cap: never hold the page longer than five seconds */
+    setTimeout(lift, 5000); /* hard cap first: nothing can ever trap the page on black */
+    var winReady = document.readyState === 'complete';
+    var heroReady = false;
+    function maybe(){ if (winReady && heroReady) setTimeout(lift, 700); }
+    if (!winReady) window.addEventListener('load', function(){ winReady = true; maybe(); });
+    var v = document.querySelector('.t-hero video');
+    var bgEl = document.querySelector('.t-hero-media');
+    if (v) {
+      if (v.readyState >= 3) { heroReady = true; }
+      else {
+        v.addEventListener('canplay', function(){ heroReady = true; maybe(); });
+        v.addEventListener('error', function(){ heroReady = true; maybe(); });
+      }
+    } else if (bgEl) {
+      var m = /url\(['"]?([^'")]+)/.exec(bgEl.getAttribute('style') || '');
+      if (m) {
+        var probe = new Image();
+        probe.onload = probe.onerror = function(){ heroReady = true; maybe(); };
+        probe.src = m[1];
+      } else { heroReady = true; }
+    } else { heroReady = true; }
+    maybe();
   })();
 
   if ('IntersectionObserver' in window) {
