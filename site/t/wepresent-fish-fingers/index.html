@@ -74,22 +74,41 @@
   function alertNow(){
     if (!ALERT_ENDPOINT) return;
     if (/^(localhost|127\.0\.0\.1)$/i.test(location.hostname)) return; /* local previews stay quiet */
+    var ua = navigator.userAgent || '';
+    var device = /iPad|Android(?!.*Mobile)/i.test(ua) ? 'tablet' : /iPhone|Android|Mobile|Windows Phone/i.test(ua) ? 'phone' : 'desktop';
+    var os = /iPhone|iPad|iPod/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android'
+      : /Mac OS X/.test(ua) ? 'macOS' : /Windows/.test(ua) ? 'Windows' : '';
+    var browser = /Edg/.test(ua) ? 'Edge' : /CriOS|Chrome/.test(ua) ? 'Chrome'
+      : /FxiOS|Firefox/.test(ua) ? 'Firefox' : /Safari/.test(ua) ? 'Safari' : '';
+    var tz = '', localTime = '';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+    try { localTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); } catch (e) {}
+    var returning = false;
+    try {
+      returning = sessionStorage.getItem('t-session') === '1';
+      sessionStorage.setItem('t-session', '1');
+    } catch (e) {}
+    var meta = (device === 'desktop' ? '💻' : '📱') + ' ' + device
+      + (os ? ' · ' + os : '') + (browser ? ' · ' + browser : '')
+      + (localTime ? ' — ' + localTime + ' local' : '') + (tz ? ' (' + tz + ')' : '');
+    var visit = returning ? '↩ return visit' : '★ first open';
     try {
       if (ALERT_MODE === 'telegram') {
         fetch(ALERT_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: ALERT_CHAT, text: 'Treatment opened — ' + ALERT_TITLE + '\n' + window.location.href, disable_web_page_preview: true })
+          body: JSON.stringify({ chat_id: ALERT_CHAT, text: 'Treatment opened — ' + ALERT_TITLE + '\n' + meta + '\n' + visit + '\n' + window.location.href, disable_web_page_preview: true })
         }).catch(function(){});
       } else if (ALERT_MODE === 'json') {
         fetch(ALERT_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ treatment: ALERT_TITLE, url: window.location.href, time: new Date().toISOString() })
+          body: JSON.stringify({ treatment: ALERT_TITLE, url: window.location.href, time: new Date().toISOString(), device: device, os: os, browser: browser, timezone: tz, returning: returning })
         }).catch(function(){});
       } else {
         var body = '_subject=' + encodeURIComponent('Treatment opened: ' + ALERT_TITLE)
-          + '&event=treatment_open&page=' + encodeURIComponent(window.location.href);
+          + '&event=treatment_open&page=' + encodeURIComponent(window.location.href)
+          + '&info=' + encodeURIComponent(meta + ' — ' + visit);
         fetch(ALERT_ENDPOINT, {
           method: 'POST',
           mode: 'no-cors',
