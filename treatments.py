@@ -81,7 +81,13 @@ TREATMENT_CSS = r"""
 .t-version{margin:34px 0 0;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--t-dim)}
 .t-reveal{opacity:0;transform:translateY(22px);transition:opacity .95s cubic-bezier(.22,.61,.36,1),transform .95s cubic-bezier(.22,.61,.36,1)}
 .t-reveal.is-in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.t-reveal{opacity:1!important;transform:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){.t-reveal{opacity:1!important;transform:none!important;transition:none!important}.t-curtain{display:none!important}.is-loading .treatment{opacity:1!important}}
+.treatment{transition:opacity 1s ease}
+.is-loading .treatment{opacity:0}
+.t-curtain{position:fixed;inset:0;z-index:60;background:var(--t-bg);display:flex;align-items:center;justify-content:center;transition:opacity .9s ease,visibility .9s}
+.t-curtain::after{content:"";width:72px;height:1px;background:var(--t-dim);animation:t-pulse 1.6s ease-in-out infinite}
+.t-curtain.is-up{opacity:0;visibility:hidden;pointer-events:none}
+@keyframes t-pulse{0%,100%{opacity:.2}50%{opacity:.85}}
 @media (max-width:720px){
   .t-hero{padding:var(--pad) 16px}
   .t-hero-video{object-fit:cover}
@@ -121,6 +127,9 @@ TREATMENT_CSS = r"""
   .t-lede .t-p{font-size:14pt}
   .t-quote{font-size:16pt;color:#000}
   .t-reveal{opacity:1!important;transform:none!important}
+  .t-curtain{display:none!important}
+  .is-loading .treatment{opacity:1!important}
+  .treatment{opacity:1!important;transition:none}
   .t-credits{border-top:1pt solid #999}
 }
 """
@@ -219,6 +228,27 @@ TREATMENT_JS = r"""
 
   /* ---- motion ---- */
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- cinema curtain: lift once the page is genuinely ready ---- */
+  (function(){
+    var curtain = document.querySelector('.t-curtain');
+    var seen = false;
+    try { seen = sessionStorage.getItem('t-curtain') === '1'; } catch (e) {}
+    var lifted = false;
+    function lift(){
+      if (lifted) return;
+      lifted = true;
+      try { sessionStorage.setItem('t-curtain', '1'); } catch (e) {}
+      document.body.classList.remove('is-loading');
+      if (curtain) curtain.classList.add('is-up');
+    }
+    if (reduce) { lift(); return; }
+    var ready = false;
+    function maybe(){ if (ready) setTimeout(lift, seen ? 0 : 900); }
+    if (document.readyState === 'complete') { ready = true; maybe(); }
+    else window.addEventListener('load', function(){ ready = true; maybe(); });
+    setTimeout(lift, 5000); /* hard cap: never hold the page longer than five seconds */
+  })();
 
   if ('IntersectionObserver' in window) {
     var sectionIo = new IntersectionObserver(function(entries){
@@ -327,6 +357,27 @@ def resolve_asset(site_root: Path, src: str) -> str:
     return ASSET_PREFIX + name
 
 
+_DIM_CACHE: dict[str, tuple[int, int] | None] = {}
+
+
+def img_dims(site_root: Path, resolved: str) -> tuple[int, int] | None:
+    """Intrinsic size for width/height attributes — reserves layout space."""
+    if not resolved.startswith(ASSET_PREFIX):
+        return None
+    rel = resolved[len(ASSET_PREFIX):]
+    if rel in _DIM_CACHE:
+        return _DIM_CACHE[rel]
+    try:
+        from PIL import Image
+
+        with Image.open(site_root / rel) as img:
+            dims = img.size
+    except Exception:
+        dims = None
+    _DIM_CACHE[rel] = dims
+    return dims
+
+
 def is_video(path: str) -> bool:
     return Path(path).suffix.lower() in {".mp4", ".webm", ".mov"}
 
@@ -351,10 +402,12 @@ def render_work(site_root: Path, items: list[dict[str, str]]) -> str:
         title = md_inline(item.get("title", ""))
         artist = md_inline(item.get("artist", ""))
         url = item.get("url", "").strip()
+        dims = img_dims(site_root, src)
+        size_attr = f' width="{dims[0]}" height="{dims[1]}"' if dims else ""
         inner = (
             '<figure class="t-fig">'
             f'<img src="{html.escape(src, quote=True)}" '
-            f'alt="{html.escape(_md_plain(item.get("title", "")), quote=True)}" loading="lazy">'
+            f'alt="{html.escape(_md_plain(item.get("title", "")), quote=True)}" loading="lazy" decoding="async"{size_attr}>'
             "</figure>"
         )
         inner += f'<p class="t-work-title">{title}</p>'
@@ -552,9 +605,11 @@ def render_blocks(site_root: Path, body: str) -> str:
                     "</div>"
                 )
             else:
+                dims = img_dims(site_root, resolved)
+                size_attr = f' width="{dims[0]}" height="{dims[1]}"' if dims else ""
                 media = (
                     f'<img src="{html.escape(resolved, quote=True)}" '
-                    f'alt="{html.escape(caption or alt, quote=True)}" loading="lazy">'
+                    f'alt="{html.escape(caption or alt, quote=True)}" loading="lazy" decoding="async"{size_attr}>'
                 )
             fig = f'<figure class="t-fig">{media}'
             if caption:
@@ -766,8 +821,10 @@ def render_treatment(
   <link rel="canonical" href="{html.escape(site_url, quote=True)}/t/{html.escape(slug, quote=True)}/">
   <link rel="stylesheet" href="{stylesheet}">
   <script type="application/ld+json">{json.dumps(payload, ensure_ascii=False)}</script>{analytics}
+  <noscript><style>.t-curtain{{display:none!important}}.is-loading .treatment{{opacity:1!important}}</style></noscript>
 </head>
-<body class="treatment-page">
+<body class="treatment-page is-loading">
+<div class="t-curtain" aria-hidden="true"></div>
 <article class="treatment">
   <header class="t-hero">{hero_markup}</header>
   <div class="t-body">

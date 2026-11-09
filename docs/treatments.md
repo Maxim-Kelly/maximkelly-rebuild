@@ -127,6 +127,7 @@ Re-running is safe — anything already small is left alone.
 Deliberately restrained — the ideas are the product, not the animation.
 
 - every block fades up once as it enters the viewport
+- a brief dark curtain on first open — the page lifts once it is ready (max five seconds, instant on revisit)
 - `full:` images get a subtle (~5%) parallax drift
 - the hero title fades in on load
 
