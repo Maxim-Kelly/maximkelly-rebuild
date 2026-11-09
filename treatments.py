@@ -25,10 +25,12 @@ TREATMENT_CSS = r"""
 .t-kicker{margin:0 0 20px;font-size:var(--text-caption);letter-spacing:.32em;text-transform:uppercase;color:var(--t-muted)}
 .t-title{margin:0;font-size:clamp(34px,6.4vw,104px);line-height:.92;letter-spacing:-.055em;font-weight:400;text-wrap:balance}
 .t-meta{margin:26px 0 0;font-size:clamp(11px,1vw,13px);letter-spacing:.22em;text-transform:uppercase;color:var(--t-muted);line-height:1.8}
-.t-body{padding:clamp(56px,9vw,120px) 0}
-.t-section{margin:0 auto clamp(56px,9vw,112px)}
+.t-body{padding:clamp(56px,9vw,120px) 0;counter-reset:tsec}
+.t-section{margin:0 auto clamp(72px,11vw,136px);counter-increment:tsec}
 .t-section:last-child{margin-bottom:0}
-.t-section-title{margin:0 auto clamp(28px,5vw,52px);width:var(--t-col);padding:0;font-size:clamp(11px,1vw,13px);letter-spacing:.3em;text-transform:uppercase;color:var(--t-dim);font-weight:400}
+.t-section-title{margin:0 auto clamp(28px,5vw,52px);width:var(--t-col);padding:0;font-size:clamp(11px,1vw,13px);letter-spacing:.3em;text-transform:uppercase;color:var(--t-dim);font-weight:400;display:flex;align-items:center;gap:1.4em}
+.t-section-title::before{content:counter(tsec,decimal-leading-zero);flex:none;letter-spacing:.18em;color:var(--t-muted)}
+.t-section-title::after{content:"";flex:1;height:1px;background:var(--t-rule)}
 .t-block{margin:0 auto}
 .t-block--col{width:var(--t-col)}
 .t-block--col-wide{width:min(90ch,calc(100% - 2 * var(--pad)))}
@@ -36,22 +38,26 @@ TREATMENT_CSS = r"""
 .t-block--full{width:94vw;margin-left:calc(50% - 47vw)}
 .t-h3{margin:0 0 .55em;font-size:clamp(20px,2.2vw,30px);line-height:1.18;letter-spacing:-.025em;font-weight:400}
 .t-p{margin:0 0 1.35em;font-size:clamp(18px,1.4vw,23px);line-height:1.62;letter-spacing:-.004em;color:#dcd8d0}
+.t-lede .t-p{font-size:clamp(21px,2.2vw,29px);line-height:1.5;letter-spacing:-.012em;color:var(--t-fg)}
 .t-p:last-child{margin-bottom:0}
 .t-list{margin:0 0 1.5em;padding-left:1.15em;font-size:clamp(18px,1.4vw,23px);line-height:1.62;color:#dcd8d0}
 .t-list li{margin:.42em 0}
 .t-cols-2{column-count:2;column-gap:clamp(28px,4vw,56px)}
 .t-quote{margin:0;padding:0 0 0 clamp(18px,2.4vw,28px);border-left:1px solid var(--t-rule);font-size:clamp(22px,2.8vw,38px);line-height:1.22;letter-spacing:-.035em;color:var(--t-fg)}
-.t-fig{margin:clamp(38px,6vw,72px) 0}
+.t-fig{margin:clamp(48px,7vw,88px) 0}
 .t-fig img{display:block;width:100%;height:auto}
 .t-fig figcaption{margin:12px 2px 0;font-size:clamp(11px,.95vw,13px);letter-spacing:.14em;text-transform:uppercase;color:var(--t-dim);line-height:1.55}
 .t-block--full .t-fig{margin-inline:0}
 .t-block--full figcaption{padding-inline:var(--pad)}
 .t-video{position:relative;width:100%;aspect-ratio:16/9;background:#000}
 .t-video iframe,.t-video video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
-.t-split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4.5vw,64px);align-items:start;width:var(--t-wide);margin:clamp(38px,6vw,72px) auto}
+.t-split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4.5vw,64px);align-items:start;width:var(--t-wide);margin:clamp(20px,3vw,38px) auto clamp(38px,6vw,72px)}
 .t-split>*{min-width:0}
+.t-split-pane{display:flex;flex-direction:column;gap:clamp(18px,2.4vw,32px)}
 .t-split .t-block{width:auto;margin:0}
 .t-split .t-fig{margin:0}
+.t-split .t-pause{width:auto;margin:0;height:clamp(16px,2vw,26px)}
+.t-split .t-tiny{width:auto;margin:0;height:clamp(6px,.8vw,10px)}
 .t-work{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,3.5vw,48px);width:var(--t-wide);margin:clamp(38px,6vw,72px) auto}
 .t-work-item{display:block;text-decoration:none}
 .t-work-item .t-fig{margin:0}
@@ -64,7 +70,9 @@ TREATMENT_CSS = r"""
 .t-awards dd{margin:0}
 .t-award-org{display:block;letter-spacing:-.01em;color:var(--t-fg)}
 .t-award-detail{display:block;margin-top:4px;font-size:clamp(11px,.95vw,13px);letter-spacing:.14em;text-transform:uppercase;color:var(--t-dim)}
-.t-break{width:100%;margin:clamp(56px,9vw,112px) 0;border:0;border-top:1px solid var(--t-rule)}
+.t-break{width:var(--t-wide);margin:clamp(80px,12vw,160px) auto;border:0;border-top:1px solid var(--t-rule)}
+.t-pause{width:var(--t-col);margin:clamp(22px,3vw,30px) auto clamp(38px,5vw,56px);height:0}
+.t-tiny{width:var(--t-col);margin:0 auto;height:clamp(10px,1.4vw,18px)}
 .t-credits{width:var(--t-wide);margin:0 auto;padding:clamp(48px,8vw,96px) 0 clamp(64px,10vw,120px);border-top:1px solid var(--t-rule);display:flex;justify-content:flex-end}
 .t-credits-inner{width:min(460px,100%)}
 .t-credits dl{display:grid;grid-template-columns:minmax(110px,.55fr) 1.45fr;gap:10px clamp(18px,3vw,32px);margin:0;font-size:clamp(12px,1vw,14px)}
@@ -99,13 +107,18 @@ TREATMENT_CSS = r"""
   .t-kicker,.t-meta{color:#555}
   .t-title{font-size:30pt;letter-spacing:-.02em}
   .t-body{padding:18pt 0}
-  .t-section{margin:0 0 18pt}
+  .t-section{margin:0 0 18pt;page-break-before:always;break-before:page}
+  .t-break{margin:0 0 18pt;width:auto;page-break-before:always;break-before:page}
+  .t-break + .t-section{page-break-before:auto;break-before:auto}
+  .t-pause{margin:8pt 0 14pt;height:0}
+  .t-tiny{height:6pt}
   .t-section-title{position:static;background:none;color:#555;padding:0 0 8pt}
   .t-block,.t-block--col,.t-block--col-wide,.t-block--wide,.t-block--full,.t-split,.t-credits{width:auto;margin-left:0;margin-right:0}
   .t-split{display:grid;grid-template-columns:1fr 1fr}
   .t-credits{display:block;border-top:1pt solid #999}
   .t-credits-inner{width:auto}
   .t-p,.t-list{color:#000;font-size:11pt}
+  .t-lede .t-p{font-size:14pt}
   .t-quote{font-size:16pt;color:#000}
   .t-reveal{opacity:1!important;transform:none!important}
   .t-credits{border-top:1pt solid #999}
@@ -127,6 +140,7 @@ TREATMENT_JS = r"""
   var ALERT_TITLE = '__ALERT_TITLE__';
   function alertNow(){
     if (!ALERT_ENDPOINT) return;
+    if (/^(localhost|127\.0\.0\.1)$/i.test(location.hostname)) return; /* local previews stay quiet */
     try {
       if (ALERT_MODE === 'telegram') {
         fetch(ALERT_ENDPOINT, {
@@ -258,7 +272,7 @@ IMAGE_LINE = re.compile(r"^!\[(.*?)\]\((?:(inline|wide|full):\s*)?([^)]+)\)\s*$"
 VIDEO_LINE = re.compile(r"^\{\{\s*video:\s*(.+?)\s*\}\}\s*$")
 CAPTION_LINE = re.compile(r"^\*([^*].*?)\*\s*$")
 HEADING_LINE = re.compile(r"^(#{2,3})\s+(.*)$")
-DIRECTIVE_LINE = re.compile(r"^\{\{\s*(wide|full|columns:\s*\d+)\s*\}\}\s*$", re.I)
+DIRECTIVE_LINE = re.compile(r"^\{\{\s*(wide|full|columns:\s*\d+|lede)\s*\}\}\s*$", re.I)
 SPLIT_OPEN = re.compile(r"^\{\{\s*split\s*$", re.I)
 WORK_OPEN = re.compile(r"^\{\{\s*work\s*$", re.I)
 AWARDS_OPEN = re.compile(r"^\{\{\s*awards\s*$", re.I)
@@ -409,6 +423,9 @@ def render_blocks(site_root: Path, body: str) -> str:
             if token == "columns:2":
                 pending_extra = "t-cols-2"
                 pending_width = pending_width or "col"
+            elif token == "lede":
+                pending_extra = "t-lede"
+                pending_width = pending_width or "col"
             else:
                 pending_width = token
             i += 1
@@ -433,7 +450,12 @@ def render_blocks(site_root: Path, body: str) -> str:
                 i += 1
             left_html = render_blocks(site_root, "\n".join(left))
             right_html = render_blocks(site_root, "\n".join(right))
-            out.append(f'<div class="t-split">{left_html}{right_html}</div>')
+            out.append(
+                '<div class="t-split">'
+                f'<div class="t-split-pane">{left_html}</div>'
+                f'<div class="t-split-pane">{right_html}</div>'
+                "</div>"
+            )
             continue
 
         if WORK_OPEN.match(stripped):
@@ -481,6 +503,16 @@ def render_blocks(site_root: Path, body: str) -> str:
             i += 1
             continue
 
+        if stripped == "***":
+            out.append('<div class="t-pause"></div>')
+            i += 1
+            continue
+
+        if stripped == "~~":
+            out.append('<div class="t-tiny"></div>')
+            i += 1
+            continue
+
         heading = HEADING_LINE.match(stripped)
         if heading:
             level = len(heading.group(1))
@@ -507,9 +539,16 @@ def render_blocks(site_root: Path, body: str) -> str:
                     caption = md_inline(cap.group(1).strip())
                     i += 1
             if is_video(resolved):
+                poster_attr = ""
+                stem = Path(src).with_suffix("").as_posix()
+                for ext in (".jpg", ".jpeg", ".png", ".webp"):
+                    candidate = f"{stem}-poster{ext}"
+                    if (site_root / candidate).exists():
+                        poster_attr = f' poster="{html.escape(ASSET_PREFIX + candidate, quote=True)}"'
+                        break
                 media = (
                     '<div class="t-video">'
-                    f'<video src="{html.escape(resolved, quote=True)}" autoplay muted loop playsinline></video>'
+                    f'<video src="{html.escape(resolved, quote=True)}"{poster_attr} autoplay muted loop playsinline></video>'
                     "</div>"
                 )
             else:
@@ -570,8 +609,10 @@ def render_blocks(site_root: Path, body: str) -> str:
                 or SPLIT_OPEN.match(nxt)
                 or WORK_OPEN.match(nxt)
                 or AWARDS_OPEN.match(nxt)
-                or nxt == "---"
+                or nxt in ("---", "***", "~~")
             ):
+                break
+            if not re.match(r"^[a-z]", nxt):  # only lowercase lines are hard-wrap continuations
                 break
             para.append(nxt)
             i += 1

@@ -31,7 +31,7 @@
 <div class="t-block t-block--col t-reveal"><p class="t-p">A short paragraph here — the logline. What actually happens in the film.</p></div>
 <div class="t-block t-block--col t-reveal"><p class="t-p">Then the reason it has to exist. Not the plot: the <em>reason</em>.</p></div>
 </section>
-<div class="t-split"><div class="t-block t-block--col t-reveal"><p class="t-p"><strong>Tone.</strong> What does it feel like in the room? What is the camera doing, and why?</p></div><div class="t-block t-block--wide t-reveal"><figure class="t-fig"><img src="../../assets/cargo/DJANGO_DJANGO_SPIRALS_MASTER_040920_DCP_VERSION_B.00_01_47_14.Still007.jpg" alt="Frame reference — put a still that says what this film feels like." loading="lazy"><figcaption>Frame reference — put a still that says what this film feels like.</figcaption></figure></div></div>
+<div class="t-split"><div class="t-split-pane"><div class="t-block t-block--col t-reveal"><p class="t-p"><strong>Tone.</strong> What does it feel like in the room? What is the camera doing, and why?</p></div></div><div class="t-split-pane"><div class="t-block t-block--wide t-reveal"><figure class="t-fig"><img src="../../assets/cargo/DJANGO_DJANGO_SPIRALS_MASTER_040920_DCP_VERSION_B.00_01_47_14.Still007.jpg" alt="Frame reference — put a still that says what this film feels like." loading="lazy"><figcaption>Frame reference — put a still that says what this film feels like.</figcaption></figure></div></div></div>
 <div class="t-block t-block--col t-reveal"><p class="t-p"><strong>Structure.</strong> What shape does it take. Does it escalate, loop, withhold?</p></div>
 <div class="t-block t-block--col t-reveal"><blockquote class="t-quote">The one sentence you want the audience to leave with.</blockquote></div>
 <section class="t-section" data-section="The director">
@@ -71,6 +71,7 @@
   var ALERT_TITLE = 'Fish Fingers (working title)';
   function alertNow(){
     if (!ALERT_ENDPOINT) return;
+    if (/^(localhost|127\.0\.0\.1)$/i.test(location.hostname)) return; /* local previews stay quiet */
     try {
       if (ALERT_MODE === 'telegram') {
         fetch(ALERT_ENDPOINT, {

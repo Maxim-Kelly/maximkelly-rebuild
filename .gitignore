@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# Python bytecode
+__pycache__/
+
 # Editor / backup leftovers — never deploy these
 *.bak
 *.orig
