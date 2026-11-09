@@ -155,7 +155,7 @@ TREATMENT_JS = r"""
         fetch(ALERT_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: ALERT_CHAT, text: 'Treatment opened — ' + ALERT_TITLE + '\n' + window.location.href })
+          body: JSON.stringify({ chat_id: ALERT_CHAT, text: 'Treatment opened — ' + ALERT_TITLE + '\n' + window.location.href, disable_web_page_preview: true })
         }).catch(function(){});
       } else if (ALERT_MODE === 'json') {
         fetch(ALERT_ENDPOINT, {
@@ -773,9 +773,15 @@ def render_treatment(
         inner += f'<p class="t-version">{html.escape(str(meta["version"]))}</p>'
     credits_markup = f'<footer class="t-credits"><div class="t-credits-inner">{inner}</div></footer>' if inner else ""
 
-    description = html.escape(
-        re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", body)).strip()[:240], quote=True
-    )
+    plain = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", body)        # images
+    plain = re.sub(r"\{\{.*?\}\}", " ", plain, flags=re.S)      # directives, split/work/awards blocks
+    plain = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", plain)      # links -> their text
+    plain = re.sub(r"^#{2,4}\s+", "", plain, flags=re.M)          # headings
+    plain = re.sub(r"^>\s?", "", plain, flags=re.M)               # pull quotes
+    plain = re.sub(r"[*`]", "", plain)                            # emphasis markers
+    plain = re.sub(r"^[-~]{2,}\s*$", " ", plain, flags=re.M)      # breaks
+    plain = re.sub(r"^-\s+", "", plain, flags=re.M)               # list bullets
+    description = html.escape(re.sub(r"\s+", " ", plain).strip()[:240], quote=True)
     payload: dict[str, Any] = {
         "@context": "https://schema.org",
         "@type": "CreativeWork",

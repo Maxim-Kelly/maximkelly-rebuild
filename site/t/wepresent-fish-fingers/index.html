@@ -79,7 +79,7 @@
         fetch(ALERT_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: ALERT_CHAT, text: 'Treatment opened — ' + ALERT_TITLE + '\n' + window.location.href })
+          body: JSON.stringify({ chat_id: ALERT_CHAT, text: 'Treatment opened — ' + ALERT_TITLE + '\n' + window.location.href, disable_web_page_preview: true })
         }).catch(function(){});
       } else if (ALERT_MODE === 'json') {
         fetch(ALERT_ENDPOINT, {

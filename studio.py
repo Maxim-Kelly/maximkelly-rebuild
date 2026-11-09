@@ -451,6 +451,7 @@ def send_test_alert() -> dict:
     payload = urlencode({
         "chat_id": chat,
         "text": "Test alert — the treatment alert pipe is alive. (Sent from Studio.)",
+        "disable_web_page_preview": "true",
     })
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     try:
