@@ -185,6 +185,26 @@ right:
 
 ---
 
+## THE SOHO HOTEL SHOOT
+
+{{split
+left:
+The Soho Hotel screening room gives us a starting point. The room itself is a little corporate, so I've done a quick background test to show how we can transform it into something more beautiful and cinematic.
+We keep the shoot quick and focused. A couple of hours with the Sugababes, picking up two or three performance setups, portraits, close-ups and all the additional plates and lighting passes I’ll need to build the world around them.
+
+![](assets/treatments/sugababes-love-language/Clip_18.mp4)
+*Quick Background Swap test.*
+
+right:
+![](assets/treatments/sugababes-love-language/Treatment_v1.mp4)
+*Quick Background Swap test.*
+
+The performances are the priority. I'll take the material away and build out the rest in post: extending the room, changing the backgrounds, creating the Hollywood portrait setups and developing some of the dreamlike transformations.
+Everything we can capture beautifully in camera, we will. Everything else I can build afterwards. A small shoot, but with plenty to work with.
+}}
+
+---
+
 ## THANK YOU
 
 ### The film is simple, and it stays simple. What makes it sophisticated is that every part of it belongs to the same world: the styling, the lighting, the effects, the camera, the film look. Everything in it is built for one thing: Keisha, Mutya and Siobhán performing.
