@@ -624,9 +624,21 @@ class Studio(BaseHTTPRequestHandler):
                 if not re.fullmatch(r"[A-Za-z0-9_\-]+", slug):
                     self._json({"error": "bad slug"}, 400)
                     return
+                name = (query.get("name") or [""])[0] or slug
                 path_md = CONTENT / "treatments" / f"{slug}.md"
                 if not path_md.exists():
-                    path_md.write_text(STARTER_TREATMENT, encoding="utf-8")
+                    save_treatment(slug, {
+                        "meta": {
+                            "client": "", "track": name, "production": "",
+                            "director": "Maxim Kelly", "date": "",
+                            "version": "Treatment v1", "hero": "",
+                        },
+                        "blocks": [
+                            {"type": "text", "style": "body", "text": "Opening line — one or two sentences on the idea."},
+                            {"type": "text", "style": "section", "text": "## The idea"},
+                            {"type": "text", "style": "body", "text": "What actually happens in the film."},
+                        ],
+                    })
                 self._json(load_treatment(path_md))
                 return
 
@@ -943,10 +955,15 @@ async function pickTreatment(slug) {
   render();
 }
 async function newTreatment() {
-  const slug = prompt('Slug (e.g. sugababes-love-language):');
-  if (!slug) return;
-  current = await api('/api/new/treatment?slug=' + encodeURIComponent(slug));
-  S.treatments.push(current);
+  const name = prompt('Treatment name (e.g. Sugababes Modern Love):');
+  if (!name || !name.trim()) return;
+  const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  if (!slug) { alert('Could not make a file name from that.'); return; }
+  const doc = await api('/api/new/treatment?slug=' + encodeURIComponent(slug) + '&name=' + encodeURIComponent(name.trim()), {});
+  if (!doc || doc.error) { alert('Could not create: ' + ((doc && doc.error) || 'unknown error')); return; }
+  const i = S.treatments.findIndex(t => t.slug === slug);
+  if (i >= 0) S.treatments[i] = doc; else S.treatments.push(doc);
+  current = doc;
   render();
 }
 function setMeta(k, v) { coalescedSnap(); current.meta[k] = v; markDirty(); }
@@ -1207,10 +1224,15 @@ function renderFilms() {
 }
 async function pickProject(slug) { await save(); current = S.projects.find(p => p.slug === slug); render(); }
 async function newProject() {
-  const slug = prompt('Slug (e.g. Sugababes):');
-  if (!slug) return;
-  current = await api('/api/new/project?slug=' + encodeURIComponent(slug));
-  S.projects.push(current);
+  const name = prompt('Film name (e.g. Sugababes Modern Love):');
+  if (!name || !name.trim()) return;
+  const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  if (!slug) { alert('Could not make a file name from that.'); return; }
+  const doc = await api('/api/new/project?slug=' + encodeURIComponent(slug), {});
+  if (!doc || doc.error) { alert('Could not create: ' + ((doc && doc.error) || 'unknown error')); return; }
+  const i = S.projects.findIndex(p => p.slug === slug);
+  if (i >= 0) S.projects[i] = doc; else S.projects.push(doc);
+  current = doc;
   render();
 }
 function setProject(k, v) { coalescedSnap(); current[k] = v; markDirty(); }

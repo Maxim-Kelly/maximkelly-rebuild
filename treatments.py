@@ -416,8 +416,15 @@ def is_video(path: str) -> bool:
 
 def vimeo_embed(url: str) -> str:
     url = html.unescape(url.strip())
-    found = re.search(r"vimeo\.com/(?:video/)?([0-9]+)", url)
-    return f"https://player.vimeo.com/video/{found.group(1)}" if found else url
+    found = re.search(r"vimeo\.com/(?:video/)?([0-9]+)(?:/([0-9a-zA-Z]+))?", url)
+    if not found:
+        return url
+    video_id = found.group(1)
+    privacy = found.group(2) or ""
+    if not privacy:
+        h = re.search(r"[?&]h=([0-9a-zA-Z]+)", url)
+        privacy = h.group(1) if h else ""
+    return f"https://player.vimeo.com/video/{video_id}" + (f"?h={privacy}" if privacy else "")
 
 
 def wrap(kind: str, inner: str, *, reveal: bool = True, extra: str = "") -> str:
