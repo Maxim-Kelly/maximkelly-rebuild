@@ -40,7 +40,7 @@ IMG_BLOCK_RE = re.compile(
     r"\s*(?:\n\*\s*(?P<cap>.+?)\s*\*)?$",
     re.S,
 )
-VIDEO_BLOCK_RE = re.compile(r"^\{\{\s*video\s*:\s*(?P<url>[^}]+?)\s*\}\}$", re.I | re.S)
+VIDEO_BLOCK_RE = re.compile(r"^\{\{\s*video\s*:\s*(?P<url>[^}]+?)\s*\}\}\s*(?:\n\*\s*(?P<cap>.+?)\s*\*)?$", re.S)
 BLOCK_OPEN_RE = re.compile(r"^\s*\{\{\s*(split|work|awards)\b", re.I)
 SAFE_NAME_RE = re.compile(r"[^A-Za-z0-9._\- ]+")
 
@@ -233,7 +233,7 @@ def describe_block(text: str) -> dict:
         }
     m = VIDEO_BLOCK_RE.match(text.strip())
     if m:
-        return {"type": "video", "url": m.group("url").strip()}
+        return {"type": "video", "url": m.group("url").strip(), "caption": m.group("cap") or ""}
     if text.strip() == "***":
         return {"type": "pause"}
     if text.strip() == "~~":
@@ -295,7 +295,11 @@ def block_raw(block: dict) -> str:
             raw += f"\n*{cap}*"
         return raw
     if kind == "video":
-        return f"{{{{video: {block.get('url', '').strip()}}}}}"
+        raw = f"{{{{video: {block.get('url', '').strip()}}}}}"
+        cap = (block.get("caption") or "").strip()
+        if cap:
+            raw += f"\n*{cap}*"
+        return raw
     if kind == "rule":
         return "---"
     if kind == "pause":
@@ -997,7 +1001,7 @@ function specKind(kind) {
     text:    {type:'text', style:'body', text:''},
     heading: {type:'text', style:'section', text:'## Section'},
     image:   {type:'image', width:'inline', src:'', caption:''},
-    video:   {type:'video', url:''},
+    video:   {type:'video', url:'', caption:''},
     quote:   {type:'text', style:'quote', text:'> The line you want them to leave with'},
     list:    {type:'text', style:'list', text:'- First item'},
     pause:   {type:'pause'},
@@ -1118,7 +1122,9 @@ function blockCard(b, p, arrPath, idx) {
     </div></div>`;
   if (b.type === 'video') return cardHead('Vimeo', arrPath, idx) + `
     <label>Vimeo URL</label>
-    <input value="${esc(b.url || '')}" oninput="setB('${p}','url',this.value)"></div>`;
+    <input value="${esc(b.url || '')}" oninput="setB('${p}','url',this.value)">
+    <label>Caption</label>
+    <input value="${esc(b.caption || '')}" oninput="setB('${p}','caption',this.value)"></div>`;
   if (b.type === 'rule') return cardHead('section break', arrPath, idx) + '</div>';
   if (b.type === 'pause') return cardHead('half break', arrPath, idx) + '</div>';
   if (b.type === 'tiny') return cardHead('tiny break', arrPath, idx) + '</div>';

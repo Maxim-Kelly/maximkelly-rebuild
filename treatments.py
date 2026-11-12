@@ -51,7 +51,7 @@ TREATMENT_CSS = r"""
 .t-block--full figcaption{padding-inline:var(--pad)}
 .t-video{position:relative;width:100%;aspect-ratio:16/9;background:#000}
 .t-video iframe,.t-video video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
-.t-split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4.5vw,64px);align-items:start;width:var(--t-wide);margin:clamp(20px,3vw,38px) auto clamp(38px,6vw,72px)}
+.t-split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4.5vw,64px);align-items:start;width:var(--t-wide);margin:clamp(10px,1.6vw,22px) auto clamp(38px,6vw,72px)}
 .t-split>*{min-width:0}
 .t-split-pane{display:flex;flex-direction:column;gap:clamp(18px,2.4vw,32px)}
 .t-split .t-block{width:auto;margin:0}
@@ -662,14 +662,23 @@ def render_blocks(site_root: Path, body: str) -> str:
         video = VIDEO_LINE.match(stripped)
         if video:
             embed = vimeo_embed(video.group(1))
-            inner = (
+            caption = ""
+            if i + 1 < total:
+                cap = CAPTION_LINE.match(lines[i + 1].strip())
+                if cap:
+                    caption = md_inline(cap.group(1).strip())
+                    i += 1
+            fig = (
                 '<figure class="t-fig"><div class="t-video">'
                 f'<iframe src="{html.escape(embed, quote=True)}" '
                 'allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>'
-                "</div></figure>"
+                "</div>"
             )
+            if caption:
+                fig += f"<figcaption>{caption}</figcaption>"
+            fig += "</figure>"
             block_width, extra = take_width()
-            out.append(wrap(block_width or "wide", inner, extra=extra))
+            out.append(wrap(block_width or "wide", fig, extra=extra))
             i += 1
             continue
 
