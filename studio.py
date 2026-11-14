@@ -921,6 +921,10 @@ function renderTreatments() {
         <div><label>Director</label><input value="${esc(m.director)}" oninput="setMeta('director',this.value)"></div>
         <div><label>Date</label><input value="${esc(m.date)}" oninput="setMeta('date',this.value)"></div>
         <div><label>Version</label><input value="${esc(m.version)}" oninput="setMeta('version',this.value)"></div>
+        <div><label>Hero text</label>
+          <select onchange="setMeta('hero_text',this.value)">
+            ${['full','meta','off'].map(v => `<option value="${v}" ${(m.hero_text || 'full') === v ? 'selected' : ''}>${v === 'full' ? 'Full — title over hero' : v === 'meta' ? 'Meta only — credit line' : 'None — artwork only'}</option>`).join('')}
+          </select></div>
       </div>
       <label>Hero</label>
       <div class="row" style="align-items:flex-start">

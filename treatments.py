@@ -796,13 +796,19 @@ def render_treatment(
             '<div class="t-hero-media" '
             f'style="background-image:url(\'{html.escape(hero_src, quote=True)}\')"></div>'
         )
-    hero_markup += '<div class="t-hero-scrim"></div><div class="t-hero-inner">'
-    if client:
-        hero_markup += f'<p class="t-kicker">{html.escape(client)}</p>'
-    hero_markup += f'<h1 class="t-title">{md_inline(track)}</h1>'
-    if meta_line:
-        hero_markup += f'<p class="t-meta">{html.escape(meta_line)}</p>'
-    hero_markup += "</div>"
+    hero_text = meta.get("hero_text")
+    hero_text = "full" if hero_text is None else str(hero_text).strip().lower()
+    if hero_text in ("off", "none", "false"):
+        pass  # artwork only — no scrim, no text
+    else:
+        hero_markup += '<div class="t-hero-scrim"></div><div class="t-hero-inner">'
+        if hero_text != "meta":
+            if client:
+                hero_markup += f'<p class="t-kicker">{html.escape(client)}</p>'
+            hero_markup += f'<h1 class="t-title">{md_inline(track)}</h1>'
+        if meta_line:
+            hero_markup += f'<p class="t-meta">{html.escape(meta_line)}</p>'
+        hero_markup += "</div>"
 
     credits = [
         ("Client", meta.get("client")),
