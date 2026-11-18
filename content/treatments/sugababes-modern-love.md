@@ -49,7 +49,6 @@ The ball, the proposal, the letter, the betrayal, the divided heart, the duel. T
 
 > The period drama has codified the visual language of romance that modern audiences recognise.
 
-
 ***
 
 Think *Pride and Prejudice*, *Wuthering Heights*, *Bridgerton*, *The Favourite*. The scenes have modern equivalents. The ball becomes the prom. The marriage market becomes modern dating. The dawn duel becomes a drunken punch-up outside the bar at night.
@@ -111,18 +110,60 @@ Men move through the ballroom in formations inspired by Regency dance, using lar
 
 ## STYLING & GLAMOUR
 
-The Sugababes are the most glamorous women in the room. The styling draws on Regency silhouettes and period dress, but interpreted through a contemporary fashion sensibility.
+The Sugababes are the most glamorous women in the room. Regency dress is the starting point, reinterpreted through contemporary high fashion.
 
 ~~
 
-Beautiful fabrics, elaborate hair, jewellery and considered make-up. Corsetry, structure and detail, with each woman having her own distinct look.
-
-
-***
-
-> This isn't historical reconstruction or fancy dress. The costumes should feel luxurious, considered and fashion-led. The world may belong to 1815, but the women are unmistakably Sugababes.
+Think Vivienne Westwood's corsetry, Galliano's theatrical couture, McQueen's sculptural shapes and Tom Ford's glamour.
 
 ~~
+
+Empire lines, structured bodices, sculptural silhouettes, beautiful fabrics and elaborate detailing, with contemporary colours and unexpected materials. Each woman has her own distinct look and personality.
+
+~~
+
+{{moodboard
+![](assets/treatments/sugababes-modern-love/mCK05KYacCDqQ3ky1u6Nm2jyR7fm1h5ofU7qlk6cI1qFXfQrqDaK7n8sc0lzwFO3EmQ-y3WM9ENaJyuYJAiloVC4ETiYNHsW2SKEacOw1pmb7BkTmnINDF0OZ_5mSuLMb207IUqi7g8b4S26pseuwAW4rr8gtDWh0Ffx7eHZdvU.jpeg)
+*Vivienne Westwood AW24 - Historical silhouettes, corsetry, romantic excess and irreverence.*
+
+![](assets/treatments/sugababes-modern-love/8NSoUmZM6-xHcuI8PYA-KOaA0TBjf4m2V3EndwQwY3RNGC_SjrVAvxYD7ZclJ0DN-kSGLrnPruwivmob3hh38rqpT-hhVlP0WJzTyuYLvt6ID9pqjklKlKgv3QWTLzkoif-keGZ5szXRqfVbl-MGFiDj2awD3x3cMDo2Rn3DL5vk7MHhN5kvCvBrL0SNwEgs.jpeg)
+*Alexander McQueen - Dark romance, sculptural gowns, strong femininity and a sense of drama.*
+
+![](assets/treatments/sugababes-modern-love/4a2p7uiv2oKr9JWOGWlw_A9ciTj8iictSbuyMFmnBKBY-tHexG8qtaWsXRp9W9XrzOTq0Dw4SPfc6iMLxfoQH4EGe0QBn1T9StgeKRzhkDQGvoqFrUBJBu_GHRXg30dK4dD6_v57ohsKJARCS_zHu7Qla7bMGWZMtOYf6l4DPZBHGS9oLp7E0ddaqKsLS6vv.jpeg)
+*John Galliano for Dior - Probably the richest reference for taking historical dress and making it theatrical, sensual and fashion-led.*
+
+![](assets/treatments/sugababes-modern-love/WN_pj2oMcwLQhVa01tJcOdScHY2gFJMDINmZM5hiiZw5gsF8Gh9VlyR4fEu5LlmeXO6pMcf5T3Z4ZN-ZxeXbO-daiKbl_QQJU_sOQmGlglgFKjqERXyIzQGOQy1gFYJgcO5OcdMPx-neV8PoQR5j3OBj3hndqB0be-x0VrnrAL-wFcwkUCt_Gqr5uH5ocqTZ.jpeg)
+*Erdem - Romantic prints, embroidery, elaborate fabrics and historical references without looking like fancy dress.*
+
+![](assets/treatments/sugababes-modern-love/yAd515AGjPA8I4f8kNV_hGmYXpHK9Pb-Lq4dUWpu0OM_gmkvk5aLQcFdJP0oqJGcTP5iSOL6lgTFkr9p7ZCGAQvodpjjV7IXLkcrUJpqdQDjCQ8A-l2O7VbLMuQSFw_RX5pu348RlfxRFigzPikVFcBNMic78xs-RLnJzaT6TdRgOHxmgJC7K-Xa9TNEmX1_.jpeg)
+*Gucci under Alessandro Michele - Aristocratic eccentricity, colour, jewellery, ornament and theatrical styling.*
+
+![](assets/treatments/sugababes-modern-love/uj2XP4nbE0lCquN3z-h7vrJ5XW8yNffcrXMqdiXSm6pDFb0wqvIDigXt_AKo52N54-QjhJKbg34fiBE4B3LsQTSrpfN9ZHJPkxKUWeUPRJZ8ExcJxwKRM9s0LTj8BzH-6MqxvpouK_4dYzeKPite4DjOcca8_eL85KEpOQ-w_JyJaC_UHGRLQiDbMltj2DPq.jpg)
+*Tom Ford - For the glamour. Sexy, polished, confident.*
+
+![](assets/treatments/sugababes-modern-love/WJyFt0mL53TBGASfHuzQYrjmhrKi1hY9pPwah5XvrQ4DBerbrxncuaVsHW57uUDsVtDo8-Ry-IOcEjz7sVrCBOdPcip1RJgzq573p2hNVlt7gfsOkOiWeS9zXWGZdC1srUT1w-IuHUOsV6UzgxsCGhKKe0QIrPZJ9oA_7eR_-TI9dv3bmm3-b3lKizrMCxuR.jpeg)
+*Chloé - Romantic femininity, soft fabrics, movement and contemporary proportions.*
+
+![](assets/treatments/sugababes-modern-love/TGFLiyVhcJd6sk5QNrealzZdYiyRQ1y5mSSc3N2-uVbRijfjOFZFR7w5HzA9QxviHzpxaneNuW2QvRjFceZ10jcbKVy_qpO7hRIpFNzbEwG9x9HSZRryuU-gpQ_H0PlajwxTYKePULXo6_-dXE9-u80QJrne2JtPDFzG1yrN83d7gytNkW_pivILH12UZ5Eb.jpg)
+*Moschino AW20 - A very literal collision between historical dress and contemporary pop culture. I'd use this selectively, as it could become too playful for the film.*
+
+![](assets/treatments/sugababes-modern-love/mUEj5ntTd_UDa6Y6QrvR_tieo4nhtFNgk7vWUPamr273ERsfvZ-Anl0bCpy_yc_G3NDHiSPuVdJY5vDqqTxqHHfjb8o8H50Ly951YZJtBHLt6R2o1YbolDCq0W9bM0TH5jz2f39xKQvegxXPWrRurs3zPl09MQZ-UlUBvtK689Y_Rz0VQHboRcJ2yVHA5WVL.jpg)
+*Christian Dior, Spring 2005 Couture, John Galliano.*
+
+![](assets/treatments/sugababes-modern-love/whID_ZEzYwcH0945gOSpdVRgmh2C1sFP-7NotbDPD7bEWrSln1oDCJtGnrU8Ap3jV72WzEcKaBUp7QI78OHa7us-sl4WrmtiGuRAiiKV9yMzjQ2UD8jDEjsCo96SSfd0V2_SzYdRDQ3ZU1lnPlBjb3H7c-DeYtfmmajlMPsAREGJxSnZrV1dnEVU43_H013D.jpeg)
+*Christian Dior, Fall 2007 Couture, John Galliano*
+
+![](assets/treatments/sugababes-modern-love/4jbzf0Aw_91g6aXkZk87jbbIVLym-3_WaVTS5WhQicP3XzE3BYgPs7FrQbLx3y2uZUAVfR-jXalrdIvAoeIHonggx7iS--rSaYZrfbZgwHl3a7ruztZwkJLFqN_taq5DSrgfO07eWa7iDyE_vimuYkDK1wKSvAdXqXfpnHKJTzJeLr-37HLDJbhum0TJOsjG.jpg)
+*Harris Reed -  Probably one of the most relevant references. The collection specifically reworks debutante balls, corsetry, crinolines and headpieces into exaggerated contemporary silhouettes.*
+
+![](assets/treatments/sugababes-modern-love/6WOpYLPiLxxo94cx1IvNWyRKz-VtdVynIv47s5O9Zg_rAa3u6i0X04sWTS5YMEE8IB2qJ3c9PReoTcG-2F78MjOwm4rH3Qa4OSCqMAwDbmdEz-Bc-Hu8HxJQuWSbJDMckHoCG1als8u4YkbtWkCfK0UZ7faSjNNdmdtosqPK6tpLqQwbzr9U5at_aL3IxA5Q.jpeg)
+*Harris Reed*
+
+![](assets/treatments/sugababes-modern-love/-yPvLZRw98guysFWl0_zv_PVO5HhwoUhQQvNFrGTFc9VOrWdOzlle3kWJ6IbII438Pu205n9d0Vx2WrXrdfpaLpE66HAD7nJ3YRGAyRp5KuxuKWJrP_l-xRprVVQv-RrC8DJkmp8ewF0a0wR0ygpiI1ll5RTNZrjpb0a_8D-ZSP1iYsiXQK-1Q6TJ-kDjCun.jpg)
+*Erdem, Pre-Fall 2021  Rich textiles, embroidery and a more understated interpretation of historical femininity.*
+}}
+
+This isn't historical reconstruction or fancy dress. It's the romance of 1815 seen through a contemporary fashion lens. The men belong to the period. The Sugababes make it their own.
 
 ![](assets/treatments/sugababes-modern-love/Gavras_27.mp4)
 
@@ -191,4 +232,4 @@ Beautiful frames, great choreography and moments with real conflict and tension.
 
 ***
 
-> A bigger creative idea with a clear point of view. A film built around iconic images, designed to live beyond the video itself.
+> A bigger creative idea with a clear point of view. A grand setting, beautiful cinematography, striking tableaux and considered styling, brought together to create a film in which the Sugababes look incredible. Iconic images designed to live beyond the video itself.

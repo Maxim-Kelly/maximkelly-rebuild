@@ -58,6 +58,12 @@ TREATMENT_CSS = r"""
 .t-split .t-fig{margin:0}
 .t-split .t-pause{width:auto;margin:0;height:clamp(16px,2vw,26px)}
 .t-split .t-tiny{width:auto;margin:0;height:clamp(6px,.8vw,10px)}
+.t-moodboard{width:var(--t-wide);margin:clamp(38px,6vw,72px) auto;display:flex;flex-direction:column;gap:clamp(16px,2.2vw,28px)}
+.t-mood-row{display:flex;gap:clamp(10px,1.4vw,18px);align-items:flex-start}
+.t-mood{flex-grow:var(--r,1.5);flex-basis:0;min-width:0;margin:0}
+.t-mood img{width:100%;height:auto;display:block}
+.t-mood figcaption{margin:8px 0 0;font-size:clamp(11px,.95vw,13px);letter-spacing:.12em;text-transform:uppercase;color:var(--t-dim);line-height:1.5}
+.t-mood-row--last .t-mood{max-width:calc(var(--r,1.5) * clamp(170px,20vw,280px))}
 .t-work{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,3.5vw,48px);width:var(--t-wide);margin:clamp(38px,6vw,72px) auto}
 .t-work-item{display:block;text-decoration:none}
 .t-work-item .t-fig{margin:0}
@@ -101,6 +107,10 @@ TREATMENT_CSS = r"""
   .t-awards{grid-template-columns:1fr;gap:2px}
   .t-awards dd{margin-bottom:18px}
   .t-split{grid-template-columns:1fr;gap:clamp(22px,5vw,36px);width:calc(100% - 2 * var(--pad))}
+  .t-moodboard{width:calc(100% - 2 * var(--pad))}
+  .t-mood-row{flex-wrap:wrap}
+  .t-mood{flex:1 1 42%}
+  .t-mood-row--last .t-mood{max-width:none}
   .t-credits{padding-inline:var(--pad);justify-content:flex-start}
   .t-credits-inner{width:100%}
   .t-credits dl{grid-template-columns:1fr;gap:4px}
@@ -120,6 +130,8 @@ TREATMENT_CSS = r"""
   .t-tiny{height:6pt}
   .t-section-title{position:static;background:none;color:#555;padding:0 0 8pt}
   .t-block,.t-block--col,.t-block--col-wide,.t-block--wide,.t-block--full,.t-split,.t-credits{width:auto;margin-left:0;margin-right:0}
+  .t-moodboard{width:auto;gap:10pt}
+  .t-mood figcaption{font-size:8pt}
   .t-split{display:grid;grid-template-columns:1fr 1fr}
   .t-credits{display:block;border-top:1pt solid #999}
   .t-credits-inner{width:auto}
@@ -338,6 +350,7 @@ DIRECTIVE_LINE = re.compile(r"^\{\{\s*(wide|full|columns:\s*\d+|lede)\s*\}\}\s*$
 SPLIT_OPEN = re.compile(r"^\{\{\s*split\s*$", re.I)
 WORK_OPEN = re.compile(r"^\{\{\s*work\s*$", re.I)
 AWARDS_OPEN = re.compile(r"^\{\{\s*awards\s*$", re.I)
+MOOD_OPEN = re.compile(r"^\{\{\s*moodboard\s*$", re.I)
 SPLIT_SIDE = re.compile(r"^\s*(left|right)\s*:\s*$", re.I)
 LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
@@ -480,6 +493,43 @@ def render_awards(rows: list[list[str]]) -> str:
     )
 
 
+def render_moodboard(site_root: Path, items: list[dict]) -> str:
+    """Justified rows: true aspect ratios, equal row heights, nothing cropped."""
+    target = 3.6  # sum of aspect ratios that fills one row at a comfortable height
+    rows: list[list[dict]] = []
+    row: list[dict] = []
+    total = 0.0
+    for item in items:
+        dims = img_dims(site_root, resolve_asset(site_root, item.get("src", "")))
+        ratio = round(dims[0] / dims[1], 4) if dims else 1.5
+        row.append({**item, "_r": ratio})
+        total += ratio
+        if total >= target:
+            rows.append(row)
+            row = []
+            total = 0.0
+    if row:
+        rows.append(row)
+
+    out_rows = []
+    for ri, r in enumerate(rows):
+        last = ri == len(rows) - 1
+        cells = []
+        for item in r:
+            src = resolve_asset(site_root, item.get("src", ""))
+            caption = md_inline((item.get("caption") or "").strip())
+            cap = f"<figcaption>{caption}</figcaption>" if caption else ""
+            cells.append(
+                f'<figure class="t-mood" style="--r:{item["_r"]}">'
+                f'<img src="{html.escape(src, quote=True)}" '
+                f'alt="{html.escape(item.get("caption") or "", quote=True)}" loading="lazy" decoding="async">'
+                f"{cap}</figure>"
+            )
+        cls = "t-mood-row t-mood-row--last" if last else "t-mood-row"
+        out_rows.append(f'<div class="{cls}">{"".join(cells)}</div>')
+    return f'<div class="t-moodboard">{"".join(out_rows)}</div>'
+
+
 def render_blocks(site_root: Path, body: str) -> str:
     body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
     lines = body.splitlines()
@@ -587,6 +637,34 @@ def render_blocks(site_root: Path, body: str) -> str:
                     award_rows.append([part.strip() for part in line.split("|", 2)])
                 i += 1
             out.append(render_awards(award_rows))
+            continue
+
+        if MOOD_OPEN.match(stripped):
+            close_section()
+            i += 1
+            mood_items: list[dict] = []
+            mood: dict = {}
+            while i < total:
+                line = lines[i].strip()
+                if line == "}}":
+                    i += 1
+                    break
+                if not line:
+                    if mood:
+                        mood_items.append(mood)
+                        mood = {}
+                else:
+                    im = IMAGE_LINE.match(line)
+                    if im:
+                        mood = {"src": im.group(3).strip()}
+                    else:
+                        cap = CAPTION_LINE.match(line)
+                        if cap and mood is not None:
+                            mood["caption"] = cap.group(1).strip()
+                i += 1
+            if mood:
+                mood_items.append(mood)
+            out.append(render_moodboard(site_root, mood_items))
             continue
 
         if stripped == "---":
@@ -712,6 +790,7 @@ def render_blocks(site_root: Path, body: str) -> str:
                 or SPLIT_OPEN.match(nxt)
                 or WORK_OPEN.match(nxt)
                 or AWARDS_OPEN.match(nxt)
+                or MOOD_OPEN.match(nxt)
                 or nxt in ("---", "***", "~~")
             ):
                 break

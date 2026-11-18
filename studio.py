@@ -152,7 +152,7 @@ def text_style(raw: str) -> str:
 
 
 SPLIT_SIDE_RE = re.compile(r"^\s*(left|right)\s*:\s*$", re.I)
-BLOCK_KIND_RE = re.compile(r"^\{\{\s*(split|work|awards)\s*$", re.I)
+BLOCK_KIND_RE = re.compile(r"^\{\{\s*(split|work|awards|moodboard)\s*$", re.I)
 LEDE_RE = re.compile(r"^(?:\{\{\s*lede\s*\}\}\s*)+", re.I)
 
 
@@ -222,6 +222,29 @@ def parse_awards(text: str) -> dict:
     return {"type": "awards", "raw": text, "rows": rows}
 
 
+def parse_moodboard(text: str) -> dict:
+    items: list[dict] = []
+    current: dict = {}
+    for line in text.splitlines()[1:]:
+        if line.strip() == "}}":
+            break
+        if not line.strip():
+            if current:
+                items.append(current)
+                current = {}
+            continue
+        im = IMG_BLOCK_RE.match(line.strip())
+        if im:
+            current = {"src": im.group("src")}
+        else:
+            cap = re.match(r"^\*([^*].*?)\*\s*$", line.strip())
+            if cap and current:
+                current["caption"] = cap.group(1)
+    if current:
+        items.append(current)
+    return {"type": "moodboard", "raw": text, "items": items}
+
+
 def describe_block(text: str) -> dict:
     m = IMG_BLOCK_RE.match(text.strip())
     if m:
@@ -243,7 +266,7 @@ def describe_block(text: str) -> dict:
     first_line = text.strip().splitlines()[0] if text.strip() else ""
     kind = BLOCK_KIND_RE.match(first_line)
     if kind:
-        parser = {"split": parse_split, "work": parse_work, "awards": parse_awards}[kind.group(1).lower()]
+        parser = {"split": parse_split, "work": parse_work, "awards": parse_awards, "moodboard": parse_moodboard}[kind.group(1).lower()]
         return parser(text.strip())
     lede = LEDE_RE.match(text)
     if lede:
@@ -274,6 +297,15 @@ def canonical_block(block: dict) -> str:
     if kind == "awards":
         rows = [" | ".join(p for p in row).rstrip(" |") for row in block.get("rows") or []]
         return "{{awards\n" + "\n".join(rows) + "\n}}"
+    if kind == "moodboard":
+        parts = []
+        for item in block.get("items") or []:
+            seg = f"![]({item.get('src', '')})"
+            cap = (item.get("caption") or "").strip()
+            if cap:
+                seg += f"\n*{cap}*"
+            parts.append(seg)
+        return "{{moodboard\n" + "\n\n".join(parts) + "\n}}"
     return block.get("text", "")
 
 
@@ -306,7 +338,7 @@ def block_raw(block: dict) -> str:
         return "***"
     if kind == "tiny":
         return "~~"
-    if kind in ("split", "work", "awards"):
+    if kind in ("split", "work", "awards", "moodboard"):
         raw = block.get("raw") or ""
         if raw and _strip_raw(describe_block(raw)) == _strip_raw(block):
             return raw
@@ -1012,6 +1044,7 @@ function specKind(kind) {
     tiny:    {type:'tiny'},
     split:   {type:'split', left:[], right:[]},
     work:    {type:'work', items:[{image:'',title:'',artist:'',url:''}]},
+    moodboard: {type:'moodboard', items:[{src:'',caption:''}]},
     awards:  {type:'awards', rows:[['','','']]},
     rule:    {type:'rule'},
   }[kind];
@@ -1079,7 +1112,7 @@ function setCell(p, j, c, v) {
 
 /* ---------- block cards (recursive — panes use these too) ---------- */
 const STYLES = [['lede','Lede — big intro'],['body','Body text'],['section','## Section'],['subheading','### Subheading'],['quote','> Pull quote'],['list','- List']];
-const ADD_LABELS = {text:'Paragraph', heading:'Heading', image:'Image / video', quote:'Quote', list:'List', tiny:'Tiny break', pause:'Half break', video:'Vimeo', split:'Split', work:'Work grid', awards:'Awards', rule:'Page break'};
+const ADD_LABELS = {text:'Paragraph', heading:'Heading', image:'Image / video', quote:'Quote', list:'List', tiny:'Tiny break', pause:'Half break', video:'Vimeo', split:'Split', work:'Work grid', moodboard:'Moodboard', awards:'Awards', rule:'Page break'};
 
 function insStrip(arrPath, idx) {
   return `<div class="ins"><button class="ins-plus" onclick="toggleIns(this,'${arrPath}',${idx})" title="Insert here">+</button><div class="ins-menu" hidden></div></div>`;
@@ -1087,7 +1120,7 @@ function insStrip(arrPath, idx) {
 function toggleIns(btn, arrPath, idx) {
   const menu = btn.parentNode.querySelector('.ins-menu');
   if (!menu.hidden) { menu.hidden = true; return; }
-  menu.innerHTML = ['text','heading','image','video','quote','list','tiny','pause','split','work','awards','rule'].map(k =>
+  menu.innerHTML = ['text','heading','image','video','quote','list','tiny','pause','split','work','moodboard','awards','rule'].map(k =>
     `<button class="btn small" onclick="insertAt('${arrPath}',${idx},'${k}')">${ADD_LABELS[k]}</button>`).join('');
   menu.hidden = false;
 }
@@ -1134,6 +1167,7 @@ function blockCard(b, p, arrPath, idx) {
   if (b.type === 'tiny') return cardHead('tiny break', arrPath, idx) + '</div>';
   if (b.type === 'split') return splitCard(b, p, arrPath, idx);
   if (b.type === 'work') return workCard(b, p, arrPath, idx);
+  if (b.type === 'moodboard') return moodCard(b, p, arrPath, idx);
   if (b.type === 'awards') return awardsCard(b, p, arrPath, idx);
   const isRaw = b.style === 'raw';
   return cardHead(isRaw ? 'special block — raw' : '', arrPath, idx, isRaw ? '' : `
@@ -1179,6 +1213,24 @@ function workCard(b, p, arrPath, idx) {
     </div>`).join('');
   return cardHead('Work grid', arrPath, idx) + `<div data-arr="${p}.items">${items}</div>
     <button class="btn small" style="margin-top:8px" onclick="addAt('${p}.items',{image:'',title:'',artist:'',url:''})">+ Add item</button></div>`;
+}
+
+function moodCard(b, p, arrPath, idx) {
+  const items = (b.items || []).map((it, j) => `
+    <div class="sub" draggable="true" data-idx="${j}">
+      <div class="row"><span class="grab">⠿</span><span class="tag">Image ${j + 1}</span>
+        <span class="x" onclick="delAt('${p}.items',${j})">✕</span></div>
+      <div class="row" style="align-items:flex-start">
+        <img class="thumb" src="/asset/${esc(it.src || '')}" onerror="this.style.opacity=.2">
+        <div style="flex:1;min-width:220px">
+          <div class="drop" data-drop="${p}.items[${j}]" data-updir="treatments" data-k="src">Drop image here, or click</div>
+          <label>Caption</label>
+          <input value="${esc(it.caption || '')}" oninput="setB('${p}.items[${j}]','caption',this.value)">
+        </div>
+      </div>
+    </div>`).join('');
+  return cardHead('Moodboard', arrPath, idx) + `<div data-arr="${p}.items">${items}</div>
+    <button class="btn small" style="margin-top:8px" onclick="addAt('${p}.items',{src:'',caption:''})">+ Add image</button></div>`;
 }
 
 function awardsCard(b, p, arrPath, idx) {

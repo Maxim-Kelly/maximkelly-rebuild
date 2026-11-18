@@ -140,6 +140,12 @@ img,video{display:block;max-width:100%;height:auto}
 .t-split .t-fig{margin:0}
 .t-split .t-pause{width:auto;margin:0;height:clamp(16px,2vw,26px)}
 .t-split .t-tiny{width:auto;margin:0;height:clamp(6px,.8vw,10px)}
+.t-moodboard{width:var(--t-wide);margin:clamp(38px,6vw,72px) auto;display:flex;flex-direction:column;gap:clamp(16px,2.2vw,28px)}
+.t-mood-row{display:flex;gap:clamp(10px,1.4vw,18px);align-items:flex-start}
+.t-mood{flex-grow:var(--r,1.5);flex-basis:0;min-width:0;margin:0}
+.t-mood img{width:100%;height:auto;display:block}
+.t-mood figcaption{margin:8px 0 0;font-size:clamp(11px,.95vw,13px);letter-spacing:.12em;text-transform:uppercase;color:var(--t-dim);line-height:1.5}
+.t-mood-row--last .t-mood{max-width:calc(var(--r,1.5) * clamp(170px,20vw,280px))}
 .t-work{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,3.5vw,48px);width:var(--t-wide);margin:clamp(38px,6vw,72px) auto}
 .t-work-item{display:block;text-decoration:none}
 .t-work-item .t-fig{margin:0}
@@ -183,6 +189,10 @@ img,video{display:block;max-width:100%;height:auto}
   .t-awards{grid-template-columns:1fr;gap:2px}
   .t-awards dd{margin-bottom:18px}
   .t-split{grid-template-columns:1fr;gap:clamp(22px,5vw,36px);width:calc(100% - 2 * var(--pad))}
+  .t-moodboard{width:calc(100% - 2 * var(--pad))}
+  .t-mood-row{flex-wrap:wrap}
+  .t-mood{flex:1 1 42%}
+  .t-mood-row--last .t-mood{max-width:none}
   .t-credits{padding-inline:var(--pad);justify-content:flex-start}
   .t-credits-inner{width:100%}
   .t-credits dl{grid-template-columns:1fr;gap:4px}
@@ -202,6 +212,8 @@ img,video{display:block;max-width:100%;height:auto}
   .t-tiny{height:6pt}
   .t-section-title{position:static;background:none;color:#555;padding:0 0 8pt}
   .t-block,.t-block--col,.t-block--col-wide,.t-block--wide,.t-block--full,.t-split,.t-credits{width:auto;margin-left:0;margin-right:0}
+  .t-moodboard{width:auto;gap:10pt}
+  .t-mood figcaption{font-size:8pt}
   .t-split{display:grid;grid-template-columns:1fr 1fr}
   .t-credits{display:block;border-top:1pt solid #999}
   .t-credits-inner{width:auto}
