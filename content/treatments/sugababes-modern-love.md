@@ -124,7 +124,7 @@ Beautiful fabrics, elaborate hair, jewellery and considered make-up. Corsetry, s
 
 ~~
 
-![](assets/treatments/sugababes-modern-love/Gavras_16.mp4)
+![](assets/treatments/sugababes-modern-love/Gavras_27.mp4)
 
 ## VFX / Post-PRODUCTION
 
@@ -177,10 +177,20 @@ Images now travel far beyond the films they come from. People share them, reinte
 
 The technology is divisive, but the appetite to engage with and reinvent images is undeniable. We can give people the opportunity to do the same here.
 
-~~
+***
 
 > The point isn't to make images simply to be copied. It's to make something worth copying.
 
-~~
+***
 
 Beautiful frames, great choreography and moments with real conflict and tension. If people want to put themselves into those images, that's a form of flattery. We can't control what they do with them, but we can make the images with that possibility in mind and provide the right assets.
+
+~~
+
+![](wide: assets/treatments/sugababes-modern-love/Gavras_16.mp4)
+
+***
+
+> A bigger creative idea with a clear point of view. A film built around iconic images, designed to live beyond the video itself.
+
+---
