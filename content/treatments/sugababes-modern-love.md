@@ -192,5 +192,3 @@ Beautiful frames, great choreography and moments with real conflict and tension.
 ***
 
 > A bigger creative idea with a clear point of view. A film built around iconic images, designed to live beyond the video itself.
-
----
