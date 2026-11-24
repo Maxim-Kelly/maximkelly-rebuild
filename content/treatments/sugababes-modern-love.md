@@ -32,12 +32,12 @@ left:
 *Lip-Sync performance throughout.*
 
 right:
-![](assets/treatments/sugababes-modern-love/Gavras_19.mp4)
+![](assets/treatments/sugababes-modern-love/Gavras_28.mp4)
 *AI previs. The film is shot for real.*
 }}
 
 ### A NOTE ON THE TREATMENT
-The imagery in this treatment is pre-vis only. It's the clearest way to communicate the world, compositions, styling and visual direction I have in mind for the film. These aren't intended as finished frames, but as a visual blueprint for the live-action production.
+The images in this treatment are AI-generated pre-visualisations. The artists' likenesses are approximations, while the images are intended to communicate the visual world, compositions, styling, atmosphere and overall direction of the film. They serve as a visual blueprint for the live-action production. 
 
 ***
 
@@ -165,8 +165,6 @@ Empire lines, structured bodices, sculptural silhouettes, beautiful fabrics and 
 
 This isn't historical reconstruction or fancy dress. It's the romance of 1815 seen through a contemporary fashion lens. The men belong to the period. The Sugababes make it their own.
 
-![](assets/treatments/sugababes-modern-love/Gavras_27.mp4)
-
 ## VFX / Post-PRODUCTION
 
 {{split
@@ -210,6 +208,7 @@ left:
 
 right:
 ![](assets/treatments/sugababes-modern-love/Gavras_26.mp4)
+*The period setting offers scope for each to inhabit a character of their own, shaped around their individual personality, attitude and style.*
 }}
 
 Images now travel far beyond the films they come from. People share them, reinterpret them and increasingly use AI tools to place themselves, or other celebrities, into existing images and create their own versions. 
