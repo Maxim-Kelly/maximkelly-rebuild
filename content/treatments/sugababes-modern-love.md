@@ -15,6 +15,7 @@ Keisha, Mutya and Siobhán enter the world of the period drama. Grand houses, el
 ~~
 
 {{lede}}
+{{lede}}
 But this is no ordinary costume drama. The women hold the rank. The men are the ones being pursued. The rules of romance have been rearranged.
 
 ***
@@ -24,7 +25,10 @@ But this is no ordinary costume drama. The women hold the rank. The men are the 
 ***
 
 {{lede}}
+{{lede}}
 The Sugababes preside over a world of aristocratic excess and romantic intrigue. It's Modern Love, played entirely straight.
+
+~~
 
 {{split
 left:
@@ -44,7 +48,7 @@ We enter a grand country house in the middle of a party. A ballroom filled with 
 
 ~~
 
-At the centre of it all are Keisha, Mutya and Siobhán, singing directly to camera. Composed, confident and entirely in control. They are the centre of gravity of the film. Everything else moves around them.
+At the centre of it all are Keisha, Mutya and Siobhán, singing directly to camera. Composed, confident and entirely in control. Everything else moves around them.
 
 ![](wide: assets/treatments/sugababes-modern-love/Gavras_23.mp4)
 
@@ -83,7 +87,7 @@ At the drop, the ballroom transforms. The movements become sharper, the formatio
 
 ~~
 
-The film culminates at dawn. The candles burnt out, daylight falling through the tall windows. At the centre of the room, the Sugababes remain immaculate, singing directly to camera.
+The film culminates at dawn. The ballroom is in disarray, the night's festivities over. Men lie collapsed across the floor around the Sugababes. At the centre of the chaos, the three women remain immaculate, still singing directly to camera.
 
 ***
 
@@ -178,10 +182,6 @@ Each woman has her own distinct look. Extravagant without becoming costume, bala
 ***
 
 ## ICONIC IMAGES
-
-The film is built around a series of tableaux, composed like period paintings with the attitude of fashion photography. 
-
-~~
 
 Each of the Sugababes has her own hero moment, built around a situation that gives her the space to command the frame.
 
