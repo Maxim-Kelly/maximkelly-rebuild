@@ -38,6 +38,8 @@ right:
 *AI previs. The film is shot for real.*
 }}
 
+![](wide: assets/treatments/sugababes-modern-love/Gavras_31.mp4)
+
 ***
 
 ## THE FILM
