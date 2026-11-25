@@ -4,7 +4,7 @@ track: Modern Love
 production: Friend
 director: Maxim Kelly
 date: November 2026
-version: Treatment v1
+version: Treatment v2
 hero: assets/treatments/sugababes-modern-love/Gavras_4.mp4
 hero_text: meta
 ---
@@ -30,11 +30,10 @@ The Sugababes preside over a world of aristocratic excess and romantic intrigue.
 
 {{split
 left:
-![](assets/treatments/sugababes-modern-love/Gavras_20.mp4)
-*Lip-Sync performance throughout.*
+![](assets/treatments/sugababes-modern-love/Gavras_34.mp4)
 
 right:
-![](assets/treatments/sugababes-modern-love/Gavras_28.mp4)
+![](assets/treatments/sugababes-modern-love/Gavras_33.mp4)
 *AI previs. The film is shot for real.*
 }}
 
@@ -96,11 +95,19 @@ The film culminates at dawn. The ballroom is in disarray, the night's festivitie
 
 ***
 
-![](wide: assets/treatments/sugababes-modern-love/Gavras_16.mp4)
+{{split
+left:
+![](assets/treatments/sugababes-modern-love/Gavras_16.mp4)
+
+right:
+![](assets/treatments/sugababes-modern-love/Gavras_28.mp4)
+}}
 
 ***
 
 ## The World
+
+![](wide: assets/treatments/sugababes-modern-love/Gavras_32.mp4)
 
 The world draws from the great period films. The Duellists, Dangerous Liaisons, Queen Margot, Barry Lyndon and The Leopard. Their sense of grandeur, composition and atmosphere informs a setting that feels tangible and lived in.
 
