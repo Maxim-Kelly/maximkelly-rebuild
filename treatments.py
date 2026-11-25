@@ -584,6 +584,8 @@ def render_blocks(site_root: Path, body: str) -> str:
                 if line.strip() == "}}":
                     i += 1
                     break
+                if SPLIT_OPEN.match(line) or WORK_OPEN.match(line) or AWARDS_OPEN.match(line) or MOOD_OPEN.match(line):
+                    break  # unclosed block — never swallow the next section
                 side = SPLIT_SIDE.match(line)
                 if side:
                     target = left if side.group(1).lower() == "left" else right
@@ -610,6 +612,8 @@ def render_blocks(site_root: Path, body: str) -> str:
                 if line == "}}":
                     i += 1
                     break
+                if MOOD_OPEN.match(line) or WORK_OPEN.match(line) or AWARDS_OPEN.match(line) or SPLIT_OPEN.match(line) or HEADING_LINE.match(line):
+                    break  # unclosed block — never swallow the next section
                 if not line:
                     if current:
                         items.append(current)
@@ -633,6 +637,8 @@ def render_blocks(site_root: Path, body: str) -> str:
                 if line == "}}":
                     i += 1
                     break
+                if MOOD_OPEN.match(line) or WORK_OPEN.match(line) or AWARDS_OPEN.match(line) or SPLIT_OPEN.match(line) or HEADING_LINE.match(line):
+                    break  # unclosed block — never swallow the next section
                 if line:
                     award_rows.append([part.strip() for part in line.split("|", 2)])
                 i += 1
@@ -649,6 +655,12 @@ def render_blocks(site_root: Path, body: str) -> str:
                 if line == "}}":
                     i += 1
                     break
+                if (
+                    MOOD_OPEN.match(line) or WORK_OPEN.match(line)
+                    or AWARDS_OPEN.match(line) or SPLIT_OPEN.match(line)
+                    or HEADING_LINE.match(line)
+                ):
+                    break  # unclosed block — never swallow the next section
                 if not line:
                     if mood:
                         mood_items.append(mood)
@@ -659,8 +671,11 @@ def render_blocks(site_root: Path, body: str) -> str:
                         mood = {"src": im.group(3).strip()}
                     else:
                         cap = CAPTION_LINE.match(line)
-                        if cap and mood is not None:
-                            mood["caption"] = cap.group(1).strip()
+                        if cap:
+                            if mood:
+                                mood["caption"] = cap.group(1).strip()
+                            elif mood_items and "caption" not in mood_items[-1]:
+                                mood_items[-1]["caption"] = cap.group(1).strip()
                 i += 1
             if mood:
                 mood_items.append(mood)

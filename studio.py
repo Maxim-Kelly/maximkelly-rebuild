@@ -41,7 +41,7 @@ IMG_BLOCK_RE = re.compile(
     re.S,
 )
 VIDEO_BLOCK_RE = re.compile(r"^\{\{\s*video\s*:\s*(?P<url>[^}]+?)\s*\}\}\s*(?:\n\*\s*(?P<cap>.+?)\s*\*)?$", re.S)
-BLOCK_OPEN_RE = re.compile(r"^\s*\{\{\s*(split|work|awards)\b", re.I)
+BLOCK_OPEN_RE = re.compile(r"^\s*\{\{\s*(split|work|awards|moodboard)\b", re.I)
 SAFE_NAME_RE = re.compile(r"[^A-Za-z0-9._\- ]+")
 
 MIME = {
@@ -115,15 +115,24 @@ def split_blocks(body: str) -> list[str]:
     i = 0
     while i < len(lines):
         line = lines[i]
-        if BLOCK_OPEN_RE.match(line):
+        opener = BLOCK_OPEN_RE.match(line)
+        if opener:
+            open_kind = opener.group(1).lower()
             flush()
             cur.append(line)
             i += 1
             while i < len(lines):
-                cur.append(lines[i])
-                if lines[i].strip() == "}}":
+                nxt = lines[i]
+                if nxt.strip() == "}}":
+                    cur.append(nxt)
                     i += 1
                     break
+                if BLOCK_OPEN_RE.match(nxt) or (
+                    open_kind in ("work", "awards", "moodboard")
+                    and re.match(r"^#{2,3}\s", nxt)
+                ):
+                    break  # unclosed block — never swallow the rest of the document
+                cur.append(nxt)
                 i += 1
             flush()
             continue
@@ -238,8 +247,11 @@ def parse_moodboard(text: str) -> dict:
             current = {"src": im.group("src")}
         else:
             cap = re.match(r"^\*([^*].*?)\*\s*$", line.strip())
-            if cap and current:
-                current["caption"] = cap.group(1)
+            if cap:
+                if current:
+                    current["caption"] = cap.group(1)
+                elif items and "caption" not in items[-1]:
+                    items[-1]["caption"] = cap.group(1)  # caption stranded by a blank line
     if current:
         items.append(current)
     return {"type": "moodboard", "raw": text, "items": items}

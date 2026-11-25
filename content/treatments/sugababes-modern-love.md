@@ -15,7 +15,7 @@ Keisha, Mutya and Siobhán enter the world of the period drama. Grand houses, el
 ~~
 
 {{lede}}
-But this is no ordinary costume drama. The women hold the rank. The men are the ones being pursued. The rules of romance have been turned upside down.
+But this is no ordinary costume drama. The women hold the rank. The men are the ones being pursued. The rules of romance have been rearranged.
 
 ***
 
@@ -24,7 +24,7 @@ But this is no ordinary costume drama. The women hold the rank. The men are the 
 ***
 
 {{lede}}
-The Sugababes take over a world of aristocratic excess and romantic intrigue. It's *Modern Love*, played entirely straight, with the conventions of the period drama rearranged around them.
+The Sugababes preside over a world of aristocratic excess and romantic intrigue. It's Modern Love, played entirely straight.
 
 {{split
 left:
@@ -36,30 +36,35 @@ right:
 *AI previs. The film is shot for real.*
 }}
 
-### A NOTE ON THE TREATMENT
-The images in this treatment are AI-generated pre-visualisations. The artists' likenesses are approximations, while the images are intended to communicate the visual world, compositions, styling, atmosphere and overall direction of the film. They serve as a visual blueprint for the live-action production. 
-
 ***
 
-## THE IDEA
+## THE FILM
 
-The ball, the proposal, the letter, the betrayal, the divided heart, the duel. These are the familiar ingredients of period romance.
+We enter a grand country house in the middle of a party. A ballroom filled with guests, candlelight, elaborate costumes and the rituals of courtship. Men and women move through the rooms, exchanging glances, letters and invitations.
 
-***
+~~
 
-> The period drama has codified the visual language of romance that modern audiences recognise.
+At the centre of it all are Keisha, Mutya and Siobhán, singing directly to camera. Composed, confident and entirely in control. They are the centre of gravity of the film. Everything else moves around them.
 
-***
+![](wide: assets/treatments/sugababes-modern-love/Gavras_23.mp4)
 
-Think *Pride and Prejudice*, *Wuthering Heights*, *Bridgerton*, *The Favourite*. The scenes have modern equivalents. The ball becomes the prom. The marriage market becomes modern dating. The dawn duel becomes a drunken punch-up outside the bar at night.
+~~
+
+As the night unfolds, we move between the ballroom, drawing rooms and grounds, discovering a series of moments within this world. 
 
 ![](wide: assets/treatments/sugababes-modern-love/Gavras_5.mp4)
 
 ~~
 
-We're taking this visual language and rewriting its rules. The rituals remain, but the Sugababes occupy the centre of a world that has traditionally belonged to men.
+A letter passed across a crowded room. A proposal made before the entire assembly. A dispute played out in the library. A stolen encounter in a doorway. A confrontation that escalates into a duel at dawn.
 
 ***
+
+![](wide: assets/treatments/sugababes-modern-love/Gavras_22.mp4)
+
+~~
+
+The party gradually becomes more animated. The choreography grows more elaborate, the situations more heightened and the world increasingly caught up in the rhythm of the record.
 
 {{split
 left:
@@ -70,25 +75,21 @@ right:
 *Traditional Gender Roles of the Genre are Reversed.*
 }}
 
-## THE STORY
+At the drop, the ballroom transforms. The movements become sharper, the formations more precise. Courtship becomes a spectacle.
 
 ~~
 
-The country house is our setting, with the ballroom at its centre. The party is in full swing. Guests move between the ballroom, the surrounding rooms and the grounds.
+The film culminates at dawn. The candles burnt out, daylight falling through the tall windows. At the centre of the room, the Sugababes remain immaculate, singing directly to camera.
 
-![](wide: assets/treatments/sugababes-modern-love/Gavras_23.mp4)
+***
 
-Keisha, Mutya and Siobhán sing directly to camera throughout. They are the focus of the film. Everything else happens around them.
+![](wide: assets/treatments/sugababes-modern-love/Gavras_16.mp4)
 
-![](wide: assets/treatments/sugababes-modern-love/Gavras_22.mp4)
+***
 
-Around the performance, we see a handful of vignettes: an exchanged letter, a stolen glance, a drunken indiscretion, a moment of jealousy. Two women face each other with sabres drawn.
+## The World
 
-![](wide: assets/treatments/sugababes-modern-love/Gavras_9.mp4)
-
-~~
-
-Each moment suggests a larger romantic drama without needing to explain it.
+The world draws from the great period films. The Duellists, Dangerous Liaisons, Queen Margot, Barry Lyndon and The Leopard. Their sense of grandeur, composition and atmosphere informs a setting that feels tangible and lived in.
 
 {{split
 left:
@@ -98,27 +99,28 @@ right:
 ![](assets/treatments/sugababes-modern-love/Gavras_18.mp4)
 }}
 
-## Choreography 
+~~
 
-> The courtship becomes a dance
+Everything is played with complete conviction. The romance, spectacle, rivalries and rituals of courtship are taken seriously, but the traditional gender roles are reversed.
 
-***
+~~
 
-Men move through the ballroom in formations inspired by Regency dance, using large folding fans as part of the choreography. The fans open and close as they cross the floor and move between formations. The Sugababes sing to camera as the choreography unfolds around them.
+The collision of this world with contemporary garage is what makes the film feel modern. The music, choreography and visual language bring two seemingly disparate eras together in a way that feels unexpected and entirely its own.
 
 {{video: https://vimeo.com/1247606601/da99a1c199?share=copy&fl=sv&fe=ci}}
+*Choreography Reference with Music (Press Play)*
 
 ## STYLING & GLAMOUR
 
-The Sugababes are the most glamorous women in the room. Regency dress is the starting point, reinterpreted through contemporary high fashion.
+The Sugababes are the most glamorous women in the room.
 
 ~~
 
-Think Vivienne Westwood's corsetry, Galliano's theatrical couture, McQueen's sculptural shapes and Tom Ford's glamour.
+Regency dress reinterpreted through contemporary high fashion. Vivienne Westwood's corsetry, Galliano's theatrical couture, McQueen's sculptural shapes and Tom Ford's glamour.
 
 ~~
 
-Empire lines, structured bodices, sculptural silhouettes, beautiful fabrics and elaborate detailing, with contemporary colours and unexpected materials. Each woman has her own distinct look and personality.
+Empire lines, structured bodices, rich fabrics, embroidery and elaborate detailing. Historical silhouettes reworked into something powerful, modern and fashion-led.
 
 ~~
 
@@ -160,47 +162,52 @@ Empire lines, structured bodices, sculptural silhouettes, beautiful fabrics and 
 *Harris Reed*
 
 ![](assets/treatments/sugababes-modern-love/-yPvLZRw98guysFWl0_zv_PVO5HhwoUhQQvNFrGTFc9VOrWdOzlle3kWJ6IbII438Pu205n9d0Vx2WrXrdfpaLpE66HAD7nJ3YRGAyRp5KuxuKWJrP_l-xRprVVQv-RrC8DJkmp8ewF0a0wR0ygpiI1ll5RTNZrjpb0a_8D-ZSP1iYsiXQK-1Q6TJ-kDjCun.jpg)
-*Erdem, Pre-Fall 2021  Rich textiles, embroidery and a more understated interpretation of historical femininity.*
+
+*Erdem, Pre-Fall 2021. Rich textiles, embroidery and a more understated interpretation of historical femininity.*
+
 }}
-
-This isn't historical reconstruction or fancy dress. It's the romance of 1815 seen through a contemporary fashion lens. The men belong to the period. The Sugababes make it their own.
-
-## VFX / Post-PRODUCTION
-
-{{split
-left:
-The film will be grounded in live action. We film as much as possible in camera, capturing the performers, choreography, costumes, props and practical environments.
-
-![](assets/treatments/sugababes-modern-love/Modern_Love_FINAL_video-select_011.mp4)
-*VFX can add Animals or Add Props.*
-
-VFX will extend and enhance what we capture. This could include expanding the architecture, adding depth and scale to the ballroom, extending crowds and developing the surrounding environment.
-
-right:
-The approach is to get as much as possible in camera, then use VFX to build beyond the physical limitations of the location and production.
-
-![](assets/treatments/sugababes-modern-love/Modern_Love_FINAL_video-select_003.mp4)
-*Create Exterior Shots / Extend Shots*
-
-The effects are a natural extension of the photography, never drawing attention to themselves. Always background never foreground action or key performances.
-}}
-
-## ICONIC IMAGES
 
 ~~
 
->Every image should tell a story.
+Each woman has her own distinct look. Extravagant without becoming costume, balancing the romance of 1815 with the attitude of contemporary fashion.
 
 ***
 
-![](wide: assets/treatments/sugababes-modern-love/Gavras_24.mp4)
-*Each vignette carries a lip-sync performance.*
+## ICONIC IMAGES
 
-The film is built around carefully arranged tableaux, composed with the detail and visual language of period paintings. Each image needs a clear situation that can be understood at a glance.
+The film is built around a series of tableaux, composed like period paintings with the attitude of fashion photography. 
 
 ~~
 
-They should work as moving images and as still photographs, with enough visual impact and a strong enough idea to stand alone.
+Each of the Sugababes has her own hero moment, built around a situation that gives her the space to command the frame.
+
+***
+
+![](wide: assets/treatments/sugababes-modern-love/Gavras_9.mp4)
+
+**The assembly**. A ballroom filled with men in regimentals. Fans open in unison, forming a guard of honour around the Sugababes as they move through the room.
+
+~~
+
+**The refusal**. A man kneels before the entire assembly. The room watches. Siobhán barely acknowledges him.
+
+
+~~
+
+**The hearing**. The library. Rivals and petitioners make their cases across the room. At the head of the table, Mutya listens, unimpressed.
+
+~~
+
+**The letter**. A folded letter passes hand to hand through the ballroom. We follow its journey through the crowd, catching fleeting glances and reactions along the way.
+
+~~
+
+**The duel**. Dawn, wet grass. Keisha stands opposite her adversary, sabre drawn. Seconds at a distance, breath in the cold air, the country house behind them.
+
+
+~~
+
+**The last frame**. Dawn in the ballroom. A final tableau, the men collapsed across the floor around the Sugababes. At the centre of the chaos, the three women remain immaculate, still singing to camera.
 
 {{split
 left:
@@ -211,24 +218,34 @@ right:
 *The period setting offers scope for each to inhabit a character of their own, shaped around their individual personality, attitude and style.*
 }}
 
-Images now travel far beyond the films they come from. People share them, reinterpret them and increasingly use AI tools to place themselves, or other celebrities, into existing images and create their own versions. 
+~~
+
+## PRODUCTION & VFX
+
+{{split
+left:
+The film is grounded in live action, prioritising a location with the architecture, scale and interiors to carry the world.
+
+![](assets/treatments/sugababes-modern-love/Modern_Love_FINAL_video-select_003.mp4)
+*VFX CAN EXTEND BACKGROUNDS*
+
+Performers, choreography, costumes, props and as much of the environment as possible are captured in camera. Extras, blocking and composition create the density and scale of the party while keeping focus on the Sugababes.
+
+right:
+VFX extend the architecture, crowds and surrounding environment beyond the physical limitations of the location, seamlessly extending the photography rather than drawing attention to themselves.
 
 ~~
 
-The technology is divisive, but the appetite to engage with and reinvent images is undeniable. We can give people the opportunity to do the same here.
+![](assets/treatments/sugababes-modern-love/Modern_Love_FINAL_video-select_008.mp4)
+*Can also add animals, props or background characters.*
 
-***
-
-> The point isn't to make images simply to be copied. It's to make something worth copying.
-
-***
-
-Beautiful frames, great choreography and moments with real conflict and tension. If people want to put themselves into those images, that's a form of flattery. We can't control what they do with them, but we can make the images with that possibility in mind and provide the right assets.
+The result is a grand period setting, striking tableaux and considered styling, with the Sugababes at its centre.
+}}
 
 ~~
 
-![](wide: assets/treatments/sugababes-modern-love/Gavras_16.mp4)
+![](wide: assets/treatments/sugababes-modern-love/Gavras_29.mp4)
 
-***
+---
 
-> A bigger creative idea with a clear point of view. A grand setting, beautiful cinematography, striking tableaux and considered styling, brought together to create a film in which the Sugababes look incredible. Iconic images designed to live beyond the video itself.
+### *All images in this treatment are AI-generated pre-visualisations. The artists' likenesses are approximations, intended to communicate compositions, styling and atmosphere as a blueprint for live action.*
