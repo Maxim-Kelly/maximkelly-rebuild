@@ -51,6 +51,7 @@ We enter a grand country house in the middle of a party. A ballroom filled with 
 ***
 
 ![](wide: assets/treatments/sugababes-modern-love/Gavras_23.mp4)
+*The Sugababes remain front and centre throughout.*
 
 ~~
 
@@ -73,10 +74,11 @@ The party gradually becomes more animated. The choreography grows more elaborate
 {{split
 left:
 ![](assets/treatments/sugababes-modern-love/Gavras_17.mp4)
+*The men occupy the roles and positions traditionally assigned to women in the period drama.*
 
 right:
 ![](assets/treatments/sugababes-modern-love/Gavras_21.mp4)
-*Traditional Gender Roles of the Genre are Reversed.*
+*The gender roles of the period romance are reversed.*
 }}
 
 At the drop, the ballroom transforms. The movements become sharper, the formations more precise. Courtship becomes a spectacle.
@@ -84,6 +86,7 @@ At the drop, the ballroom transforms. The movements become sharper, the formatio
 ~~
 
 ![](assets/treatments/sugababes-modern-love/Gavras_30.mp4)
+*Choreography is woven throughout the film.*
 
 ~~
 
@@ -120,7 +123,7 @@ Everything is played with complete conviction. The romance, spectacle, rivalries
 The music, choreography and visual language bring two seemingly disparate eras together in a way that feels unexpected and entirely its own.
 
 {{video: https://vimeo.com/1247606601/da99a1c199?share=copy&fl=sv&fe=ci}}
-*Choreography Reference with Music (Press Play)*
+*Choreography reference, with music (press play)*
 
 ## STYLING & GLAMOUR
 
@@ -192,6 +195,7 @@ Each woman has her own distinct look. Extravagant without becoming costume, bala
 ***
 
 ![](wide: assets/treatments/sugababes-modern-love/Gavras_9.mp4)
+*A DUEL ON THE LAWN AT DAWN.*
 
 **The assembly**. A ballroom filled with men in regimentals. Fans open in unison, forming a guard of honour around the Sugababes as they move through the room.
 
