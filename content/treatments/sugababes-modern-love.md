@@ -15,8 +15,7 @@ Keisha, Mutya and Siobhán enter the world of the period drama. Grand houses, el
 ~~
 
 {{lede}}
-{{lede}}
-But this is no ordinary costume drama. The women hold the rank. The men are the ones being pursued. The rules of romance have been rearranged.
+We take the codes and conventions of the period romance and turn them on their head. The women hold the rank. The men are the ones being pursued. The rituals of courtship become a game of power, competition and desire.
 
 ***
 
@@ -25,8 +24,7 @@ But this is no ordinary costume drama. The women hold the rank. The men are the 
 ***
 
 {{lede}}
-{{lede}}
-The Sugababes preside over a world of aristocratic excess and romantic intrigue. It's Modern Love, played entirely straight.
+The Sugababes preside over a world of aristocratic excess and romantic intrigue. The period drama is played entirely straight, with the gender roles reversed.
 
 ~~
 
