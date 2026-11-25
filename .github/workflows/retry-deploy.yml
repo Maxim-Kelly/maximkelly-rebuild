@@ -22,7 +22,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh api "repos/${{ github.repository }}/actions/workflows/deploy.yml/runs?status=failure&per_page=5" \
-            --jq '.workflow_runs[] | select(.run_attempt < 5) | .id' | while read -r id; do
+            --jq '.workflow_runs[] | select(.run_attempt < 25) | .id' | while read -r id; do
               echo "re-running run $id"
               gh api -X POST "repos/${{ github.repository }}/actions/runs/$id/rerun-failed-jobs" || true
             done
