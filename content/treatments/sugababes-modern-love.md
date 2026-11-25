@@ -79,6 +79,10 @@ At the drop, the ballroom transforms. The movements become sharper, the formatio
 
 ~~
 
+![](assets/treatments/sugababes-modern-love/Gavras_30.mp4)
+
+~~
+
 The film culminates at dawn. The candles burnt out, daylight falling through the tall windows. At the centre of the room, the Sugababes remain immaculate, singing directly to camera.
 
 ***
