@@ -44,9 +44,11 @@ right:
 
 We enter a grand country house in the middle of a party. A ballroom filled with guests, candlelight, elaborate costumes and the rituals of courtship. Men and women move through the rooms, exchanging glances, letters and invitations.
 
-~~
+***
 
-At the centre of it all are Keisha, Mutya and Siobhán, singing directly to camera. Composed, confident and entirely in control. Everything else moves around them.
+> At the centre of it all are Keisha, Mutya and Siobhán, singing directly to camera. Composed, confident and entirely in control. Everything else moves around them.
+
+***
 
 ![](wide: assets/treatments/sugababes-modern-love/Gavras_23.mp4)
 
@@ -109,9 +111,13 @@ right:
 
 Everything is played with complete conviction. The romance, spectacle, rivalries and rituals of courtship are taken seriously, but the traditional gender roles are reversed.
 
-~~
+***
 
-The collision of this world with contemporary garage is what makes the film feel modern. The music, choreography and visual language bring two seemingly disparate eras together in a way that feels unexpected and entirely its own.
+> The collision of this world with contemporary garage is what makes the film feel modern.
+
+***
+
+The music, choreography and visual language bring two seemingly disparate eras together in a way that feels unexpected and entirely its own.
 
 {{video: https://vimeo.com/1247606601/da99a1c199?share=copy&fl=sv&fe=ci}}
 *Choreography Reference with Music (Press Play)*
@@ -181,7 +187,7 @@ Each woman has her own distinct look. Extravagant without becoming costume, bala
 
 ## ICONIC IMAGES
 
-Each of the Sugababes has her own hero moment, built around a situation that gives her the space to command the frame.
+> Each of the Sugababes has her own hero moment, built around a situation that gives her the space to command the frame.
 
 ***
 
@@ -192,7 +198,6 @@ Each of the Sugababes has her own hero moment, built around a situation that giv
 ~~
 
 **The refusal**. A man kneels before the entire assembly. The room watches. Siobhán barely acknowledges him.
-
 
 ~~
 
@@ -205,7 +210,6 @@ Each of the Sugababes has her own hero moment, built around a situation that giv
 ~~
 
 **The duel**. Dawn, wet grass. Keisha stands opposite her adversary, sabre drawn. Seconds at a distance, breath in the cold air, the country house behind them.
-
 
 ~~
 
@@ -247,6 +251,7 @@ The result is a grand period setting, striking tableaux and considered styling, 
 ~~
 
 ![](wide: assets/treatments/sugababes-modern-love/Gavras_29.mp4)
+*The Final Frame.*
 
 ---
 
