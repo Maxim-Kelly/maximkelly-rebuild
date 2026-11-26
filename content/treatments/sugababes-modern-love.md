@@ -230,11 +230,12 @@ Each woman has her own distinct look. Extravagant without becoming costume, bala
 
 {{split
 left:
-![](assets/treatments/sugababes-modern-love/Gavras_25.mp4)
+![](assets/treatments/sugababes-modern-love/Gavras_24.mp4)
+*A lip-sync performance is central to every vignette*
 
 right:
 ![](assets/treatments/sugababes-modern-love/Gavras_26.mp4)
-*The period setting offers scope for each to inhabit a character of their own, shaped around their individual personality, attitude and style.*
+*The period setting creates opportunities for distinct looks and visual moments for Keisha, Mutya and Siobhán.*
 }}
 
 ~~
